@@ -1,77 +1,335 @@
 # SafaiNow — Task Tracker
 
-## Sprint 1 — Foundation
+> Granular checklist of every MVP feature. Every screen, action, API endpoint, and
+> DB requirement has its own line. Sprints follow docs/07-mvp-build-order.md exactly.
+
+---
+
+## Sprint 1 — Foundation ✅
 
 ### ✅ Monorepo Scaffold
-- [x] Turborepo + pnpm workspace initialized
+- [x] Turborepo + pnpm workspace initialised
 - [x] `apps/customer` — Expo SDK 55, React Native 0.83.2
 - [x] `apps/partner` — Expo SDK 55, React Native 0.83.2
-- [x] `apps/admin` — Next.js 16, React 19.2.3
+- [x] `apps/admin` — Next.js 16, React 19.2.3, Onest font (light/medium)
 - [x] `apps/api` — Fastify v5, TypeScript
 - [x] `packages/types` — DB types generated from Supabase
-- [x] `packages/validators` — empty, ready for Zod schemas
-- [x] `packages/utils` — empty, ready for utilities
-- [x] `packages/constants` — empty, ready for constants
+- [x] `packages/validators` — scaffolded (content still empty → Sprint 2)
+- [x] `packages/utils` — scaffolded (content still empty)
+- [x] `packages/constants` — scaffolded (content still empty → Sprint 2)
 - [x] All apps pass `tsc --noEmit`
 
-### ✅ Supabase
-- [x] Project linked
-- [x] Initial schema migration written and pushed
-  - customers, partners, services, packages
-  - bookings, booking_packages, booking_custom_services
-  - booking_timeline, job_offers, commission_ledger
-  - PostGIS enabled, enums, indexes, updated_at triggers
+### ✅ Supabase Schema
+- [x] PostGIS extension enabled
+- [x] Enums: `booking_status`, `package_type`, `commission_status`, `customer_feedback`, `address_label`
+- [x] Tables: customers, partners, services, packages, package_services
+- [x] Tables: bookings, booking_packages, booking_custom_services
+- [x] Tables: booking_timeline, job_offers, commission_ledger, customer_addresses
+- [x] Indexes + updated_at triggers on all tables
 - [x] TypeScript types generated into `packages/types`
-- [x] Supabase clients set up in all 4 apps
-  - admin: browser + server client (`@supabase/ssr`)
-  - customer/partner: `createClient` with expo-sqlite localStorage
-  - api: `createClient` with secret key
-- [x] Env files populated with real keys
+- [x] Supabase clients configured in all 4 apps
+- [x] Env files populated
 
 ### ✅ UI Libraries
 - [x] shadcn/ui (Nova preset, Radix, Tailwind v4) — admin
 - [x] NativeWind v5 + Tailwind v4 — customer + partner
-  - metro.config.js, postcss.config.mjs, global.css, nativewind-env.d.ts
 
-### 🔲 Admin Auth
-- [ ] Supabase Auth middleware (protect routes)
-- [ ] Login page (email + password)
-- [ ] Redirect to dashboard after login
-- [ ] Redirect to login if unauthenticated
+### ✅ Admin Auth
+- [x] Supabase Auth middleware (protect all /dashboard/* routes)
+- [x] Login page (email + password)
+- [x] Redirect to /dashboard after login; redirect to /login if unauthenticated
 
-### 🔲 Partner CRUD (Admin)
-- [ ] Partner list page
-- [ ] Create partner (generate passcode, bcrypt hash)
-- [ ] Edit partner
-- [ ] Toggle active/inactive
+### ✅ Admin — Partner Management
+- [x] Partner list page with status badges
+- [x] Create partner (name, phone, CNIC, profile picture upload, CNIC picture upload)
+- [x] Auto-generate 6-digit passcode → bcrypt hash stored; plain shown once in modal
+- [x] Edit partner profile details
+- [x] Toggle active / suspended (is_active)
+- [x] Delete partner permanently
+- [x] Eye icon → partner detail page
+- [x] Partner detail page: profile info + uploaded images visible
+- [x] Supabase Storage bucket `partner-assets` (public, authenticated upload)
+- [x] RLS on partners table (authenticated full access)
+- [ ] Reset passcode — generate new 6-digit code, show once in modal, bcrypt-hash + save
+- [ ] Partner detail: job history table (bookings where partner_id = this partner)
+- [ ] Partner detail: earnings summary (total earned, commission paid)
+- [ ] Partner detail: thumbs up count, thumbs down count, positive feedback rate %
+- [ ] Partner detail: cancellation rate
 
-### 🔲 Services & Packages CRUD (Admin)
-- [ ] Services list + create/edit/toggle
-- [ ] Packages list + create/edit/toggle
-- [ ] Package combination rules enforced on backend
+### ✅ Admin — Services Management
+- [x] Services list (name EN, name UR, price, status)
+- [x] Add service (name EN, name UR, price)
+- [x] Edit service inline (name, price)
+- [x] Toggle active / disabled
+- [x] Delete service (cascades from package_services automatically)
+
+### ✅ Admin — Package Management
+- [x] Packages list with type badge + status
+- [x] Create package (name EN/UR, description EN/UR, type, services multi-select, flat price)
+- [x] Edit package
+- [x] Toggle active / disabled
+- [x] Delete package
+- [x] Custom-package guard (only one allowed)
+
+### 🔲 Admin — Seed Data
+- [ ] Seed migration: 15 individual services with prices
+- [ ] Seed migration: 5 packages (Standard, Special, Advanced, Clothes W&D, Custom) with service links
+- [ ] Push seed migration to Supabase
 
 ---
 
-## Sprint 2 — Customer App
-- [ ] Customer auth (email/password + Google OAuth)
-- [ ] Homepage
-- [ ] Booking flow
-- [ ] Package combination rules (frontend)
-- [ ] Address book
+## Sprint 2 — Customer App (Core Booking Loop)
 
-## Sprint 3 — Partner Matching & Jobs
-- [ ] Partner matching (PostGIS radius query)
-- [ ] Push notifications (FCM v1)
-- [ ] Atomic job claiming
-- [ ] Live location updates
-- [ ] Cancellation window (15 min)
+### 🔲 Shared Infrastructure
+- [ ] `packages/constants/src/index.ts` — COMMISSION_RATE (0.25), PARTNER_AMOUNT_RATE (0.75), CANCELLATION_WINDOW_MS (15 * 60 * 1000), BOOKING_RADIUS_METRES
+- [ ] `packages/validators/src/index.ts` — BookingCreateSchema (Zod): package_ids, custom_service_ids, address fields, booking_type, scheduled_at
+- [ ] DB migration: customer auto-creation trigger (insert into customers on auth.users insert)
+- [ ] DB migration: RLS policies — packages/services allow anon SELECT; customers allow own SELECT/UPDATE; customer_addresses allow own CRUD; bookings allow own SELECT; booking_packages/booking_custom_services/booking_timeline allow own SELECT
 
-## Sprint 4 — Admin Dashboard
-- [ ] Real-time job feed (Supabase Realtime)
-- [ ] Commission ledger
-- [ ] Reports + CSV export
-- [ ] Feedback (thumbs up/down)
+### 🔲 Customer App — Navigation Setup
+- [ ] Install and configure Expo Router v4 (change `main` to `expo-router/entry`, add scheme + plugin to app.json)
+- [ ] Add `@/*` path alias to tsconfig.json
+- [ ] Root layout `app/_layout.tsx`: import global.css, wrap AuthProvider, session guard (redirect to login if no session)
+- [ ] Auth stack layout `app/(auth)/_layout.tsx`
+- [ ] App tabs layout `app/(app)/_layout.tsx` — bottom tabs: Home, Bookings, Profile
 
-## Sprint 5 — Recurring Bookings
-- [ ] Scheduled bookings
-- [ ] BullMQ + Redis setup
+### 🔲 Customer App — Auth
+- [ ] `lib/auth.tsx` — AuthContext: session, loading, signOut; useAuth hook
+- [ ] Login screen `app/(auth)/login.tsx` — email + password form, "Sign in with Google" button, link to signup
+- [ ] Signup screen `app/(auth)/signup.tsx` — full name, email, password, confirm password
+- [ ] Google OAuth via expo-web-browser + expo-auth-session → supabase.auth.signInWithOAuth
+- [ ] Session persistence on app restart (Supabase client handles via expo-secure-store)
+
+### 🔲 Customer App — Homepage & Package Browsing
+- [ ] Home stack layout `app/(app)/(home)/_layout.tsx`
+- [ ] Homepage `app/(app)/(home)/index.tsx` — fetch active packages, show PackageCard grid
+- [ ] `components/PackageCard.tsx` — package name, type badge, price, tap to navigate to detail
+- [ ] Package detail `app/(app)/(home)/package/[id].tsx` — name, description, full service list, price, "Book This Package" button
+- [ ] Custom package builder `app/(app)/(home)/custom.tsx` — list all active services with checkboxes, live running total, "Book Custom" button
+- [ ] `components/ServiceItem.tsx` — service row with checkbox + price
+
+### 🔲 Customer App — Booking Flow
+- [ ] `context/booking-flow.tsx` — BookingFlowContext: selected packages, custom service ids, total price, address, booking type, scheduled_at
+- [ ] Booking flow stack `app/booking/_layout.tsx` (modal stack)
+- [ ] Step 1 — Package selection `app/booking/index.tsx`:
+  - [ ] Show all active non-custom packages as selectable cards
+  - [ ] Enforce combination rules in UI: only one cleaning package; standalone can combine with cleaning; selecting custom clears all others
+  - [ ] "Customise" option navigates to custom builder
+  - [ ] Live total price shown at bottom
+  - [ ] "Next" navigates to address step
+- [ ] Step 2 — Address selection `app/booking/address.tsx`:
+  - [ ] List saved addresses from customer_addresses (default highlighted)
+  - [ ] "Use my current location" button → expo-location GPS → reverse geocode → fill address
+  - [ ] "Add new address" inline form (address text, label picker: Home/Work/Parents House/Other)
+  - [ ] Save new address to customer_addresses
+  - [ ] Tap saved address to select it; "Next" proceeds
+- [ ] Step 3 — Booking type `app/booking/schedule.tsx`:
+  - [ ] "Instant" option (book for right now)
+  - [ ] "Scheduled" option → date + time picker (expo-date-picker or react-native DateTimePicker)
+  - [ ] "Recurring" option — show "Coming soon" (Sprint 5)
+  - [ ] "Next" proceeds
+- [ ] Step 4 — Order summary `app/booking/summary.tsx`:
+  - [ ] Show selected packages + services + price breakdown
+  - [ ] Show selected address + booking type
+  - [ ] "Book Now" button → calls POST /api/bookings → navigates to post-booking screen
+  - [ ] Error handling: show API error message
+
+### 🔲 Customer App — Post-Booking
+- [ ] Post-booking / matching status screen `app/booking/matching.tsx`:
+  - [ ] "Finding a partner…" spinner while status = pending
+  - [ ] "Cancel" button (free cancellation before acceptance)
+  - [ ] Poll or Supabase Realtime subscription on booking status
+  - [ ] Once accepted: navigate to active booking screen (Sprint 3)
+- [ ] Active booking screen `app/(app)/bookings/active/[id].tsx` (stub for Sprint 2, full in Sprint 3):
+  - [ ] Show booking status badge
+  - [ ] Show partner info (once accepted): name, phone (tap-to-call), photo
+  - [ ] Cancel button visible for 15 min after acceptance (Sprint 3)
+
+### 🔲 Customer App — Booking History
+- [ ] Booking history list `app/(app)/bookings/index.tsx` — list all bookings (status badge, date, packages, price)
+- [ ] Booking detail `app/(app)/bookings/[id].tsx` — full detail: packages, services, address, partner, status, timestamps
+- [ ] Re-book button on completed bookings (pre-fills booking flow with same packages)
+
+### 🔲 Customer App — Address Book
+- [ ] Address book screen `app/(app)/profile/addresses.tsx` — list saved addresses with default badge
+- [ ] Add address form (accessible from address book and from booking flow step 2)
+- [ ] Edit address (address text, label)
+- [ ] Delete address (with confirmation)
+- [ ] Set as default toggle
+
+### 🔲 Customer App — Profile & Settings
+- [ ] Profile screen `app/(app)/profile/index.tsx`:
+  - [ ] Show name, email, phone, profile picture
+  - [ ] Link to: Edit Profile, Address Book, Change Password, Notification Settings, Delete Account
+- [ ] Edit profile `app/(app)/profile/edit.tsx` — change display name, phone, profile picture (image picker + upload to Supabase Storage)
+- [ ] Change email `app/(app)/profile/change-email.tsx` — supabase.auth.updateUser({ email })
+- [ ] Change / set password `app/(app)/profile/change-password.tsx` — for email users: old + new; for Google-only users: set new password (dual login)
+- [ ] Push notification toggle (store preference; actual FCM wiring in Sprint 3)
+- [ ] Log out — supabase.auth.signOut → redirect to login
+- [ ] Delete account — confirmation dialog → delete customer row + supabase.auth.admin.deleteUser (via API)
+
+### 🔲 API — Booking Creation
+- [ ] Fastify auth plugin `apps/api/src/plugins/auth.ts` — verify Supabase JWT from Authorization header, attach customer to request
+- [ ] `POST /bookings` `apps/api/src/routes/bookings/index.ts`:
+  - [ ] Validate body with BookingCreateSchema (Zod)
+  - [ ] Validate package combination rules (server-side)
+  - [ ] Fetch packages + services, check all are active
+  - [ ] Calculate total_price (sum of package prices + custom service prices)
+  - [ ] Insert booking row (status: pending, address snapshot, total_price)
+  - [ ] Insert booking_packages rows (price_at_booking snapshot)
+  - [ ] Insert booking_custom_services rows if custom package (price_at_booking snapshot)
+  - [ ] Insert booking_timeline row (status: pending, actor_type: customer)
+  - [ ] Insert commission_ledger row (status: owed, amounts calculated at 75/25 split)
+  - [ ] Return { booking_id }
+- [ ] `DELETE /bookings/:id/cancel` — cancel before acceptance (only if status = pending, actor = customer)
+
+---
+
+## Sprint 3 — Matching & Live Job
+
+### 🔲 Partner App — Foundation
+- [ ] Configure Expo Router v4 in partner app
+- [ ] `I18nManager.forceRTL(true)` on app start
+- [ ] Load Noto Nastaliq Urdu font (`expo-font` or bundled asset)
+- [ ] Root layout: AuthProvider + session guard → login if no session
+- [ ] Auth stack + main stack layouts
+
+### 🔲 Partner App — Auth
+- [ ] `lib/auth.tsx` — AuthContext for partner (phone + passcode login)
+- [ ] Login screen `app/(auth)/login.tsx` — phone number input + 6-digit passcode (Urdu UI)
+- [ ] API: `POST /partners/login` — look up partner by phone, bcrypt.compare(passcode, hash), return Supabase custom JWT (or use signInWithPassword with phone hack)
+
+### 🔲 Partner App — Incoming Job
+- [ ] Register FCM device token on login → store in partners table
+- [ ] Handle incoming FCM push notification (job offer) — show JobOfferScreen
+- [ ] Job offer screen `app/job-offer/[booking_id].tsx` — customer area, packages, total price; Accept / Ignore buttons (full Urdu)
+- [ ] API: `POST /bookings/:id/accept` — atomic UPDATE WHERE status=pending RETURNING *; on success: set status=accepted + on_route + log timeline; send dismissal to other notified partners
+- [ ] If another partner accepted first: dismissal push → navigate back to home
+
+### 🔲 Partner App — Active Job
+- [ ] Active job screen `app/(app)/job/active.tsx`:
+  - [ ] Customer name, address, phone (tap-to-call via `Linking.openURL('tel:...')`)
+  - [ ] Live customer location on Google Maps (customer address lat/lng)
+  - [ ] Job stage action button: correct button shown per current status
+  - [ ] "پہنچ گیا" (Reached) → API PATCH /bookings/:id/reached → status=reached + work_in_progress auto
+  - [ ] "کام مکمل" (Completed) → API PATCH /bookings/:id/completed → status=completed
+  - [ ] "کیش وصول" (Cash Collected) → API PATCH /bookings/:id/cash-collected → status=cash_collected + update commission_ledger
+  - [ ] Cancel button (visible within 15 min of accepted_at) → API DELETE /bookings/:id/cancel (partner)
+  - [ ] Countdown timer showing time remaining in cancellation window
+
+### 🔲 Matching Engine (API)
+- [ ] `GET /partners/nearby` — PostGIS ST_DWithin query: active + available partners within radius
+- [ ] On booking creation: query nearby partners, create job_offers rows, send FCM push to all
+- [ ] FCM v1 push: `apps/api/src/lib/fcm.ts` — send via Google FCM HTTP v1 API (service account auth)
+- [ ] Dismissal push: after job accepted, push to all other job_offers for same booking
+- [ ] Timeout: if no partner accepts within N minutes, notify customer (DB-tracked timeout)
+- [ ] On partner cancellation: reset booking to pending, re-run matching excluding cancelling partner
+
+### 🔲 Live Location (Supabase Realtime)
+- [ ] Partner app: publish GPS location every 5 seconds via Supabase channel while job is active
+- [ ] Customer app: subscribe to partner location channel once booking accepted; show on Google Maps
+- [ ] Store last known location in `partners.location` (PostGIS point) on each update
+
+### 🔲 Tap-to-Call
+- [ ] Customer app: tap partner phone → `Linking.openURL('tel:+92...')`
+- [ ] Partner app: tap customer phone → `Linking.openURL('tel:+92...')`
+
+### 🔲 Cancellation Window
+- [ ] Customer app: cancel button on active booking only visible while `Date.now() - accepted_at < 15min`
+- [ ] Customer app: countdown timer showing remaining cancellation window
+- [ ] Partner app: cancel button on active job only visible within 15min window
+- [ ] Partner app: countdown timer in Urdu
+- [ ] API `DELETE /bookings/:id/cancel` — validates window, sets status, logs timeline, notifies other party
+
+### 🔲 Customer Feedback
+- [ ] Customer app: after booking status becomes `cash_collected`, show feedback prompt (thumbs up / thumbs down / skip)
+- [ ] API `POST /bookings/:id/feedback` — store `customer_feedback` on booking row (positive | negative)
+
+### 🔲 Partner App — Job History & Earnings
+- [ ] Job history screen `app/(app)/history/index.tsx` — list past completed jobs (date, packages, price)
+- [ ] Earnings screen `app/(app)/earnings/index.tsx` — total earned, commission owed per job
+
+---
+
+## Sprint 4 — Admin Dashboard & Financials
+
+### 🔲 Admin — Dashboard Home
+- [ ] Live active jobs feed (Supabase Realtime subscription on bookings where status not in terminal states)
+- [ ] Summary card: jobs completed today
+- [ ] Summary card: new customers registered this week
+- [ ] Summary card: new partners registered this week
+- [ ] Summary card: total commission collected vs outstanding
+- [ ] Top performing partners table (ordered by completed job count)
+
+### 🔲 Admin — Booking Management
+- [ ] Bookings list page `/dashboard/bookings`:
+  - [ ] Table: booking ID, customer, partner, packages, total price, commission, status, created_at
+  - [ ] Live status badge updates via Supabase Realtime (no page refresh)
+  - [ ] Filter by status, date range
+- [ ] Booking detail page `/dashboard/bookings/[id]`:
+  - [ ] All booking info: customer, partner, packages + services, address, total price
+  - [ ] Commission amount (25%)
+  - [ ] Customer feedback (thumbs up / down / none)
+  - [ ] Full timestamp log per stage (from booking_timeline)
+  - [ ] Travel time, job duration, total time (calculated from timestamps)
+  - [ ] Cancellation info (who, when, reason) if applicable
+  - [ ] "Cancel Booking" button — opens dialog with mandatory reason field → API call
+
+### 🔲 Admin — Partner Management (Remaining)
+- [ ] Reset passcode — generates new 6-digit code, bcrypt-hash + save, show plain once in modal
+- [ ] Suspend / reactivate partner (is_active toggle with confirmation)
+- [ ] Partner detail `/dashboard/partners/[id]` enhancements:
+  - [ ] Job history table (all bookings for this partner)
+  - [ ] Earnings summary (total earned across all jobs, commission paid, outstanding)
+  - [ ] Feedback: thumbs up count, thumbs down count, positive rate %
+  - [ ] Cancellation rate (partner-cancelled / total accepted)
+
+### 🔲 Admin — Customer Management
+- [ ] Customer list page `/dashboard/customers` — name, email, phone, joined date, total bookings
+- [ ] Customer detail page `/dashboard/customers/[id]`:
+  - [ ] Profile info
+  - [ ] Full booking history table
+  - [ ] Total spent
+- [ ] Suspend / reactivate customer account (store `is_active` on customers table — add migration if needed)
+
+### 🔲 Admin — Commission & Financials
+- [ ] Commission ledger page `/dashboard/commission`:
+  - [ ] Per-partner table: partner name, job date, job value, commission amount (25%), status (owed/collected), collected date
+  - [ ] "Mark as Collected" per individual job row
+  - [ ] "Mark All Collected" bulk action per partner
+- [ ] Summary cards: total owed (all partners), collected this month, collected all time, outstanding
+- [ ] Export full ledger as CSV (download via browser)
+
+### 🔲 Admin — Reports
+- [ ] Reports page `/dashboard/reports`:
+  - [ ] Bookings per day / week / month (chart using shadcn chart or recharts + data table)
+  - [ ] Top partners by jobs completed
+  - [ ] Top customers by total bookings
+  - [ ] Cancellation rates: overall, per partner, per customer
+  - [ ] Revenue and commission summary
+  - [ ] Export all reports as CSV
+
+---
+
+## Sprint 5 — Scheduled & Recurring Bookings
+
+### 🔲 Scheduled Bookings
+- [ ] Customer app: "Scheduled" booking type → date + time picker → store `scheduled_at` on booking
+- [ ] API: accept `scheduled_at` in POST /bookings; match immediately but only notify partners at `scheduled_at` time
+- [ ] Admin: show `scheduled_at` on booking detail and list
+
+### 🔲 Recurring Bookings
+- [ ] Install BullMQ + Redis (only sprint where this is allowed)
+- [ ] Customer app: "Recurring" booking type → select frequency (weekly, biweekly, monthly)
+- [ ] Store recurring schedule in a new `recurring_bookings` table (migration)
+- [ ] BullMQ worker: at each recurrence time, create a new booking and trigger matching
+- [ ] Admin: list + manage recurring schedules; cancel recurring series
+
+---
+
+## Cross-Cutting (any sprint)
+
+- [ ] Push migration to Supabase after each new migration file (`supabase db push`)
+- [ ] Regenerate `packages/types` after each schema change (`supabase gen types typescript`)
+- [ ] All apps pass `tsc --noEmit` before each commit
+- [ ] `tasks/lessons.md` updated after every correction
