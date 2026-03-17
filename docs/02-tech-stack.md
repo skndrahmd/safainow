@@ -33,7 +33,7 @@ safainow/
 |---|---|---|---|
 | Customer App | React Native (Expo) | English | Pinned to Expo SDK React version |
 | Partner App | React Native (Expo) | Urdu (RTL) | Noto Nastaliq Urdu font, `I18nManager.forceRTL(true)` |
-| Admin Dashboard | Next.js | English | Pinned to Next.js React version |
+| Admin Dashboard | Next.js | English | Pinned to Next.js React version; Onest font (light 300 / medium 500) |
 | Backend API | Node.js + Fastify | — | REST API |
 
 ## Infrastructure & Services
