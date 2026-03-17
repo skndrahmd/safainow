@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation'
 import Link from 'next/link'
+import Image from 'next/image'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -39,20 +40,45 @@ export default async function PartnerDetailPage({
         <DetailRow label="Phone" value={partner.phone} />
         <DetailRow label="CNIC" value={partner.cnic_number ?? '—'} />
         <DetailRow
-          label="Profile Picture"
-          value={partner.profile_picture_url ?? '—'}
-        />
-        <DetailRow
-          label="CNIC Picture"
-          value={partner.cnic_picture_url ?? '—'}
-        />
-        <DetailRow
           label="Created"
           value={new Date(partner.created_at).toLocaleDateString('en-PK', {
             dateStyle: 'long',
           })}
         />
       </div>
+
+      {(partner.profile_picture_url || partner.cnic_picture_url) && (
+        <div className="mt-6 flex gap-6">
+          {partner.profile_picture_url && (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm text-muted-foreground">Profile Picture</span>
+              <div className="relative h-40 w-40 overflow-hidden rounded-md border bg-muted">
+                <Image
+                  src={partner.profile_picture_url}
+                  alt="Profile picture"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          )}
+          {partner.cnic_picture_url && (
+            <div className="flex flex-col gap-2">
+              <span className="text-sm text-muted-foreground">CNIC Picture</span>
+              <div className="relative h-40 w-64 overflow-hidden rounded-md border bg-muted">
+                <Image
+                  src={partner.cnic_picture_url}
+                  alt="CNIC picture"
+                  fill
+                  className="object-cover"
+                  unoptimized
+                />
+              </div>
+            </div>
+          )}
+        </div>
+      )}
 
       <div className="mt-6 flex gap-3">
         <ResetPasscodeButton partnerId={id} />

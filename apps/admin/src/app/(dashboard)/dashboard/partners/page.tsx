@@ -1,4 +1,5 @@
 import Link from 'next/link'
+import { Eye } from 'lucide-react'
 import { createClient } from '@/lib/supabase/server'
 import { Button } from '@/components/ui/button'
 import { Badge } from '@/components/ui/badge'
@@ -36,7 +37,7 @@ export default async function PartnersPage() {
               <TableHead>Phone</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Created</TableHead>
-              <TableHead className="w-[60px]" />
+              <TableHead className="w-[100px]" />
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -63,10 +64,17 @@ export default async function PartnersPage() {
                     {new Date(partner.created_at).toLocaleDateString()}
                   </TableCell>
                   <TableCell>
-                    <PartnerActionsMenu
-                      partnerId={partner.id}
-                      isActive={partner.is_active}
-                    />
+                    <div className="flex items-center">
+                      <Button variant="ghost" size="icon" asChild>
+                        <Link href={`/dashboard/partners/${partner.id}`} aria-label="View partner">
+                          <Eye className="h-4 w-4" />
+                        </Link>
+                      </Button>
+                      <PartnerActionsMenu
+                        partnerId={partner.id}
+                        isActive={partner.is_active}
+                      />
+                    </div>
                   </TableCell>
                 </TableRow>
               ))
