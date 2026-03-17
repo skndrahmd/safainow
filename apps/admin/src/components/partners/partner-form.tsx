@@ -1,6 +1,7 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, useRef } from 'react'
+import Image from 'next/image'
 import { useRouter } from 'next/navigation'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
@@ -13,6 +14,74 @@ type Partner = Tables<'partners'>
 
 interface PartnerFormProps {
   partner?: Partner
+}
+
+interface ImageFieldProps {
+  id: string
+  name: string
+  label: string
+  existingUrl?: string | null
+  existingFieldName: string
+}
+
+function ImageField({ id, name, label, existingUrl, existingFieldName }: ImageFieldProps) {
+  const [preview, setPreview] = useState<string | null>(null)
+  const inputRef = useRef<HTMLInputElement>(null)
+
+  function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
+    const file = e.target.files?.[0]
+    if (file) {
+      setPreview(URL.createObjectURL(file))
+    }
+  }
+
+  const displayUrl = preview ?? existingUrl
+
+  return (
+    <div className="flex flex-col gap-2">
+      <Label htmlFor={id}>{label}</Label>
+      {/* Hidden field carries existing URL so server action can keep it if no new file uploaded */}
+      <input type="hidden" name={existingFieldName} value={existingUrl ?? ''} />
+      <div className="flex items-center gap-3">
+        {displayUrl && (
+          <div className="relative h-16 w-16 shrink-0 overflow-hidden rounded-md border bg-muted">
+            <Image
+              src={displayUrl}
+              alt={label}
+              fill
+              className="object-cover"
+              unoptimized
+            />
+          </div>
+        )}
+        <div className="flex flex-col gap-1 flex-1">
+          <input
+            ref={inputRef}
+            id={id}
+            name={name}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleChange}
+          />
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => inputRef.current?.click()}
+          >
+            {displayUrl ? 'Replace image' : 'Upload image'}
+          </Button>
+          {preview && (
+            <span className="text-xs text-muted-foreground">New image selected</span>
+          )}
+          {!preview && existingUrl && (
+            <span className="text-xs text-muted-foreground">Current image uploaded</span>
+          )}
+        </div>
+      </div>
+    </div>
+  )
 }
 
 export function PartnerForm({ partner }: PartnerFormProps) {
@@ -82,27 +151,21 @@ export function PartnerForm({ partner }: PartnerFormProps) {
         />
       </div>
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="profile_picture_url">Profile Picture URL</Label>
-        <Input
-          id="profile_picture_url"
-          name="profile_picture_url"
-          defaultValue={partner?.profile_picture_url ?? ''}
-          placeholder="https://..."
-          type="url"
-        />
-      </div>
+      <ImageField
+        id="profile_picture"
+        name="profile_picture"
+        label="Profile Picture"
+        existingUrl={partner?.profile_picture_url}
+        existingFieldName="existing_profile_picture_url"
+      />
 
-      <div className="flex flex-col gap-2">
-        <Label htmlFor="cnic_picture_url">CNIC Picture URL</Label>
-        <Input
-          id="cnic_picture_url"
-          name="cnic_picture_url"
-          defaultValue={partner?.cnic_picture_url ?? ''}
-          placeholder="https://..."
-          type="url"
-        />
-      </div>
+      <ImageField
+        id="cnic_picture"
+        name="cnic_picture"
+        label="CNIC Picture"
+        existingUrl={partner?.cnic_picture_url}
+        existingFieldName="existing_cnic_picture_url"
+      />
 
       {error && <p className="text-sm text-destructive">{error}</p>}
 

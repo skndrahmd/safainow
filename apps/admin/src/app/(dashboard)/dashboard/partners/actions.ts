@@ -5,8 +5,25 @@ import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { createClient } from '@/lib/supabase/server'
 
+const BUCKET = 'partner-assets'
+
 function generatePasscode(): string {
   return Math.floor(100000 + Math.random() * 900000).toString()
+}
+
+async function uploadFile(
+  supabase: Awaited<ReturnType<typeof createClient>>,
+  file: File,
+  folder: string
+): Promise<string> {
+  const ext = file.name.split('.').pop() ?? 'jpg'
+  const path = `${folder}/${Date.now()}.${ext}`
+  const { error } = await supabase.storage.from(BUCKET).upload(path, file, {
+    upsert: true,
+  })
+  if (error) throw new Error(error.message)
+  const { data } = supabase.storage.from(BUCKET).getPublicUrl(path)
+  return data.publicUrl
 }
 
 export async function createPartner(formData: FormData) {
@@ -14,9 +31,24 @@ export async function createPartner(formData: FormData) {
 
   const fullName = formData.get('full_name') as string
   const phone = formData.get('phone') as string
-  const cnicNumber = formData.get('cnic_number') as string | null
-  const profilePictureUrl = formData.get('profile_picture_url') as string | null
-  const cnicPictureUrl = formData.get('cnic_picture_url') as string | null
+  const cnicNumber = (formData.get('cnic_number') as string) || null
+
+  const profileFile = formData.get('profile_picture') as File | null
+  const cnicFile = formData.get('cnic_picture') as File | null
+
+  let profilePictureUrl: string | null = null
+  let cnicPictureUrl: string | null = null
+
+  try {
+    if (profileFile && profileFile.size > 0) {
+      profilePictureUrl = await uploadFile(supabase, profileFile, 'profile')
+    }
+    if (cnicFile && cnicFile.size > 0) {
+      cnicPictureUrl = await uploadFile(supabase, cnicFile, 'cnic')
+    }
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : 'Upload failed' }
+  }
 
   const passcode = generatePasscode()
   const passcodeHash = await bcrypt.hash(passcode, 12)
@@ -27,9 +59,9 @@ export async function createPartner(formData: FormData) {
       full_name: fullName,
       phone,
       passcode_hash: passcodeHash,
-      cnic_number: cnicNumber || null,
-      profile_picture_url: profilePictureUrl || null,
-      cnic_picture_url: cnicPictureUrl || null,
+      cnic_number: cnicNumber,
+      profile_picture_url: profilePictureUrl,
+      cnic_picture_url: cnicPictureUrl,
     })
     .select('id')
     .single()
@@ -47,18 +79,34 @@ export async function updatePartner(id: string, formData: FormData) {
 
   const fullName = formData.get('full_name') as string
   const phone = formData.get('phone') as string
-  const cnicNumber = formData.get('cnic_number') as string | null
-  const profilePictureUrl = formData.get('profile_picture_url') as string | null
-  const cnicPictureUrl = formData.get('cnic_picture_url') as string | null
+  const cnicNumber = (formData.get('cnic_number') as string) || null
+
+  const profileFile = formData.get('profile_picture') as File | null
+  const cnicFile = formData.get('cnic_picture') as File | null
+
+  // Keep existing URLs unless a new file is uploaded
+  let profilePictureUrl = (formData.get('existing_profile_picture_url') as string) || null
+  let cnicPictureUrl = (formData.get('existing_cnic_picture_url') as string) || null
+
+  try {
+    if (profileFile && profileFile.size > 0) {
+      profilePictureUrl = await uploadFile(supabase, profileFile, 'profile')
+    }
+    if (cnicFile && cnicFile.size > 0) {
+      cnicPictureUrl = await uploadFile(supabase, cnicFile, 'cnic')
+    }
+  } catch (err) {
+    return { error: err instanceof Error ? err.message : 'Upload failed' }
+  }
 
   const { error } = await supabase
     .from('partners')
     .update({
       full_name: fullName,
       phone,
-      cnic_number: cnicNumber || null,
-      profile_picture_url: profilePictureUrl || null,
-      cnic_picture_url: cnicPictureUrl || null,
+      cnic_number: cnicNumber,
+      profile_picture_url: profilePictureUrl,
+      cnic_picture_url: cnicPictureUrl,
     })
     .eq('id', id)
 
