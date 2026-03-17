@@ -181,14 +181,19 @@ export type Database = {
           cash_collected_at: string | null
           completed_at: string | null
           created_at: string
+          customer_feedback:
+            | Database["public"]["Enums"]["customer_feedback"]
+            | null
           customer_id: string
           id: string
+          on_route_at: string | null
           partner_id: string | null
           reached_at: string | null
           scheduled_at: string | null
           status: Database["public"]["Enums"]["booking_status"]
           total_price: number
           updated_at: string
+          work_in_progress_at: string | null
         }
         Insert: {
           accepted_at?: string | null
@@ -200,14 +205,19 @@ export type Database = {
           cash_collected_at?: string | null
           completed_at?: string | null
           created_at?: string
+          customer_feedback?:
+            | Database["public"]["Enums"]["customer_feedback"]
+            | null
           customer_id: string
           id?: string
+          on_route_at?: string | null
           partner_id?: string | null
           reached_at?: string | null
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_price: number
           updated_at?: string
+          work_in_progress_at?: string | null
         }
         Update: {
           accepted_at?: string | null
@@ -219,14 +229,19 @@ export type Database = {
           cash_collected_at?: string | null
           completed_at?: string | null
           created_at?: string
+          customer_feedback?:
+            | Database["public"]["Enums"]["customer_feedback"]
+            | null
           customer_id?: string
           id?: string
+          on_route_at?: string | null
           partner_id?: string | null
           reached_at?: string | null
           scheduled_at?: string | null
           status?: Database["public"]["Enums"]["booking_status"]
           total_price?: number
           updated_at?: string
+          work_in_progress_at?: string | null
         }
         Relationships: [
           {
@@ -299,6 +314,53 @@ export type Database = {
           },
         ]
       }
+      customer_addresses: {
+        Row: {
+          address_text: string
+          created_at: string
+          custom_label: string | null
+          customer_id: string
+          id: string
+          is_default: boolean
+          label: Database["public"]["Enums"]["address_label"]
+          lat: number
+          lng: number
+          updated_at: string
+        }
+        Insert: {
+          address_text: string
+          created_at?: string
+          custom_label?: string | null
+          customer_id: string
+          id?: string
+          is_default?: boolean
+          label?: Database["public"]["Enums"]["address_label"]
+          lat: number
+          lng: number
+          updated_at?: string
+        }
+        Update: {
+          address_text?: string
+          created_at?: string
+          custom_label?: string | null
+          customer_id?: string
+          id?: string
+          is_default?: boolean
+          label?: Database["public"]["Enums"]["address_label"]
+          lat?: number
+          lng?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "customer_addresses_customer_id_fkey"
+            columns: ["customer_id"]
+            isOneToOne: false
+            referencedRelation: "customers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       customers: {
         Row: {
           created_at: string
@@ -365,9 +427,47 @@ export type Database = {
           },
         ]
       }
+      package_services: {
+        Row: {
+          created_at: string
+          id: string
+          package_id: string
+          service_id: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          package_id: string
+          service_id: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          package_id?: string
+          service_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "package_services_package_id_fkey"
+            columns: ["package_id"]
+            isOneToOne: false
+            referencedRelation: "packages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "package_services_service_id_fkey"
+            columns: ["service_id"]
+            isOneToOne: false
+            referencedRelation: "services"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       packages: {
         Row: {
           created_at: string
+          description_en: string
+          description_ur: string
           id: string
           is_active: boolean
           name_en: string
@@ -378,6 +478,8 @@ export type Database = {
         }
         Insert: {
           created_at?: string
+          description_en?: string
+          description_ur?: string
           id?: string
           is_active?: boolean
           name_en: string
@@ -388,6 +490,8 @@ export type Database = {
         }
         Update: {
           created_at?: string
+          description_en?: string
+          description_ur?: string
           id?: string
           is_active?: boolean
           name_en?: string
@@ -400,6 +504,8 @@ export type Database = {
       }
       partners: {
         Row: {
+          cnic_number: string | null
+          cnic_picture_url: string | null
           created_at: string
           full_name: string
           id: string
@@ -408,9 +514,12 @@ export type Database = {
           location: unknown
           passcode_hash: string
           phone: string
+          profile_picture_url: string | null
           updated_at: string
         }
         Insert: {
+          cnic_number?: string | null
+          cnic_picture_url?: string | null
           created_at?: string
           full_name: string
           id?: string
@@ -419,9 +528,12 @@ export type Database = {
           location?: unknown
           passcode_hash: string
           phone: string
+          profile_picture_url?: string | null
           updated_at?: string
         }
         Update: {
+          cnic_number?: string | null
+          cnic_picture_url?: string | null
           created_at?: string
           full_name?: string
           id?: string
@@ -430,6 +542,7 @@ export type Database = {
           location?: unknown
           passcode_hash?: string
           phone?: string
+          profile_picture_url?: string | null
           updated_at?: string
         }
         Relationships: []
@@ -472,6 +585,7 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
+      address_label: "home" | "work" | "parents_house" | "other"
       booking_status:
         | "pending"
         | "accepted"
@@ -484,6 +598,7 @@ export type Database = {
         | "cancelled_by_partner"
         | "cancelled_by_admin"
       commission_status: "owed" | "collected"
+      customer_feedback: "positive" | "negative"
       package_type: "cleaning" | "standalone" | "custom"
     }
     CompositeTypes: {
@@ -615,6 +730,7 @@ export const Constants = {
   },
   public: {
     Enums: {
+      address_label: ["home", "work", "parents_house", "other"],
       booking_status: [
         "pending",
         "accepted",
@@ -628,6 +744,7 @@ export const Constants = {
         "cancelled_by_admin",
       ],
       commission_status: ["owed", "collected"],
+      customer_feedback: ["positive", "negative"],
       package_type: ["cleaning", "standalone", "custom"],
     },
   },

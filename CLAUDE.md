@@ -11,7 +11,7 @@ apps from one monorepo:
 - **`apps/customer`** — Expo (React Native), English, iOS + Android
 - **`apps/partner`** — Expo (React Native), Urdu RTL, Android-only,
   icon/voice-first for low-literacy users
-- **`apps/admin`** — Next.js 15, English, shadcn/ui + Tailwind v4
+- **`apps/admin`** — Next.js 16, English, shadcn/ui + Tailwind v4
 - **`apps/api`** — Node.js + Fastify, REST API
 
 Shared packages (`types`, `validators`, `utils`, `constants`) are pure
@@ -55,9 +55,9 @@ this monorepo. Follow these rules without exception:
 
 - **Shared packages**: zero React dependencies. Pure TypeScript only.
 - **`apps/customer` and `apps/partner`**: pinned to the React version required
-  by the current Expo SDK (check expo.dev/changelog). Currently `react: 18.3.1`,
-  `react-native: 0.76.0`.
-- **`apps/admin`**: pinned to `react: 19.0.0` (Next.js 15 requirement).
+  by the current Expo SDK (check expo.dev/changelog). Currently `react: 19.2.3`,
+  `react-native: 0.83.2` (Expo SDK 55).
+- **`apps/admin`**: pinned to `react: 19.2.3` (Next.js 16 requirement).
 - If a shared package ever needs React, use `peerDependencies` with
   `"react": ">=18.0.0"` — never a direct dependency.
 
@@ -169,18 +169,18 @@ Customer pays cash to partner on completion. Partner keeps 75%, SafaiNow takes
 
 ## Spec Files
 
-Full product spec lives in the root `.md` files. Read them before making product
-decisions:
+Full product spec lives in `docs/`. **Read all files in order before making any product decision or writing any feature code.**
 
-| File                      | Contents                                         |
-| ------------------------- | ------------------------------------------------ |
-| `01-project-overview.md`  | Business model, the three players                |
-| `02-tech-stack.md`        | Stack, repo structure, React version strategy    |
-| `03-service-catalogue.md` | Services, packages, combination rules            |
-| `04-user-flows.md`        | Complete feature list for all three players      |
-| `05-job-lifecycle.md`     | Job statuses, matching logic, cancellation rules |
-| `06-admin-panel.md`       | Admin dashboard module breakdown                 |
-| `07-mvp-build-order.md`   | Sprint plan, out-of-scope items                  |
+| File                           | Contents                                         |
+| ------------------------------ | ------------------------------------------------ |
+| `docs/00-START-HERE.md`        | Instructions for Claude, rules before coding     |
+| `docs/01-project-overview.md`  | Business model, the three players                |
+| `docs/02-tech-stack.md`        | Stack, repo structure, React version strategy    |
+| `docs/03-service-catalogue.md` | Services, packages, combination rules            |
+| `docs/04-user-flows.md`        | Complete feature list for all three players      |
+| `docs/05-job-lifecycle.md`     | Job statuses, matching logic, cancellation rules |
+| `docs/06-admin-panel.md`       | Admin dashboard module breakdown                 |
+| `docs/07-mvp-build-order.md`   | Sprint plan, out-of-scope items                  |
 
 ## Workflow Orchestration
 
