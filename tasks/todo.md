@@ -50,11 +50,11 @@
 - [x] Partner detail page: profile info + uploaded images visible
 - [x] Supabase Storage bucket `partner-assets` (public, authenticated upload)
 - [x] RLS on partners table (authenticated full access)
-- [ ] Reset passcode — generate new 6-digit code, show once in modal, bcrypt-hash + save
-- [ ] Partner detail: job history table (bookings where partner_id = this partner)
-- [ ] Partner detail: earnings summary (total earned, commission paid)
-- [ ] Partner detail: thumbs up count, thumbs down count, positive feedback rate %
-- [ ] Partner detail: cancellation rate
+- [x] Reset passcode — generate new 6-digit code, show once in modal, bcrypt-hash + save
+- [x] Partner detail: job history table (bookings where partner_id = this partner)
+- [x] Partner detail: earnings summary (total earned, commission paid)
+- [x] Partner detail: thumbs up count, thumbs down count, positive feedback rate %
+- [x] Partner detail: cancellation rate
 
 ### ✅ Admin — Services Management
 - [x] Services list (name EN, name UR, price, status)
@@ -71,10 +71,10 @@
 - [x] Delete package
 - [x] Custom-package guard (only one allowed)
 
-### 🔲 Admin — Seed Data
-- [ ] Seed migration: 15 individual services with prices
-- [ ] Seed migration: 5 packages (Standard, Special, Advanced, Clothes W&D, Custom) with service links
-- [ ] Push seed migration to Supabase
+### ✅ Admin — Seed Data
+- [x] Seed migration: 15 individual services with prices
+- [x] Seed migration: 5 packages (Standard, Special, Advanced, Clothes W&D, Custom) with service links
+- [x] Push seed migration to Supabase
 
 ---
 
