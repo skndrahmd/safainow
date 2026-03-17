@@ -184,69 +184,82 @@ Full product spec lives in `docs/`. **Read all files in order before making any 
 
 ## Workflow Orchestration
 
-### 1. Plan Node Default
+This is a BINDING workflow. Every rule applies to every task. Saying "I'll follow it" without doing it is not acceptable.
 
-- Enter plan mode for ANY non-trivial task (3+ steps or architectural decisions)
-- If something goes sideways, STOP and re-plan immediately - don't keep pushing
-- Use plan mode for verification steps, not just building
-- Write detailed specs upfront to reduce ambiguity
+### Step 0 — Session Start (Every Session)
 
-### 2. Subagent Strategy
+Before doing ANYTHING:
+1. Read `tasks/lessons.md` to recall all past corrections
+2. Read `tasks/todo.md` to understand current progress
+3. If a new feature: read all `docs/` spec files (00–07) in order
 
-- Use subagents liberally to keep main context window clean
-- Offload research, exploration, and parallel analysis to subagents
-- For complex problems, throw more compute at it via subagents
-- One tack per subagent for focused execution
+### Step 1 — Web Search First (No Exceptions)
 
-### 3. Self-Improvement Loop
+Before writing ANY code or giving ANY command:
+- Web search to verify latest syntax, versions, and patterns
+- Applies to: every `npx`, `pnpm add`, `pnpm dlx`, CLI command, library usage, and API pattern
+- Do NOT rely on training data alone — always cross-check with live sources
+- Flag any discrepancies between training knowledge and current documentation
 
-- After ANY correction from the user: update `tasks/lessons.md` with the pattern
-- Write rules for yourself that prevent the same mistake
-- Ruthlessly iterate on these lessons until mistake rate drops
-- Review lessons at session start for relevant project
+### Step 2 — Spawn Subagents for Research & Exploration
 
-### 4. Verification Before Done
+Before planning any non-trivial feature:
+- Spawn a **research subagent** to look up latest patterns, docs, and versions
+- Spawn an **explore subagent** to map the relevant codebase area
+- Run both **in parallel** to keep main context clean
+- One task per subagent — focused execution only
+- Use subagents liberally for complex problems — throw more compute at it
+
+### Step 3 — Plan Before Implementing
+
+For ANY task with 3+ steps or architectural decisions:
+- Use the `superpowers:writing-plans` skill to write a full implementation plan
+- Save plan to `docs/superpowers/plans/YYYY-MM-DD-<feature>.md`
+- Plan must include: file map, exact code, exact commands, verification steps
+- **Check in with user before starting implementation**
+- If something goes sideways during execution: STOP and re-plan immediately
+
+### Step 4 — Execute with Tracking
+
+- Use `superpowers:executing-plans` or `superpowers:subagent-driven-development` to execute
+- Mark each task `[x]` in the plan as it is completed
+- Update `tasks/todo.md` to reflect current sprint progress
+- Commit frequently — after each logical task
+
+### Step 5 — Verify Before Done
 
 - Never mark a task complete without proving it works
-- Diff behavior between main and your changes when relevant
-- Ask yourself: "Would a staff engineer approve this?"
-- Run tests, check logs, demonstrate correctness
+- Run type checks: `pnpm --filter <app> exec tsc --noEmit`
+- Ask: "Would a staff engineer approve this?"
+- Demonstrate correctness with logs, type checks, or manual test steps
 
-### 5. Demand Elegance (Balanced)
+### Step 6 — Demand Elegance (Balanced)
 
 - For non-trivial changes: pause and ask "is there a more elegant way?"
-- If a fix feels hacky: "Knowing everything I know now, implement the elegant
-  solution"
-- Skip this for simple, obvious fixes - don't over-engineer
-- Challenge your own work before presenting it
+- If a fix feels hacky: implement the elegant solution instead
+- Skip for simple, obvious fixes — don't over-engineer
+- Simplicity First: make every change as minimal as possible
 
-### 6. Autonomous Bug Fixing
+### Step 7 — Self-Improvement Loop
 
-- When given a bug report: just fix it. Don't ask for hand-holding
-- Point at logs, errors, failing tests - then resolve them
-- Zero context switching required from the user
-- Go fix failing CI tests without being told how
+- After ANY correction from user: immediately update `tasks/lessons.md`
+- Write a rule that prevents the exact same mistake
+- Review `tasks/lessons.md` at every session start
+- Never repeat a lesson already captured
 
-### 7. Web Verification
+### Step 8 — Autonomous Bug Fixing
 
-- Before finalizing any code changes, search the web to verify that APIs,
-  libraries, and syntax are up to date
-- Confirm that dependencies, package versions, and configuration patterns
-  reflect the latest stable releases
-- If implementing against a third-party service or SDK, look up the current
-  documentation to avoid using deprecated methods
-- Do not rely solely on training data - always cross-check with live sources
-  when accuracy matters
-- Flag any discrepancies found between your knowledge and current documentation
+- When given a bug: just fix it — no hand-holding required
+- Diagnose from logs, errors, and type failures
+- Never retry the same failing command — find root cause first
 
 ## Task Management
 
-1. **Plan First**: Write plan to `tasks/todo.md` with checkable items
-2. **Verify Plan**: Check in before starting implementation
-3. **Track Progress**: Mark items complete as you go
-4. **Explain Changes**: High-level summary at each step
-5. **Document Results**: Add review section to `tasks/todo.md`
-6. **Capture Lessons**: Update `tasks/lessons.md` after corrections
+1. **Plan First**: Write plan to `docs/superpowers/plans/` using writing-plans skill
+2. **Check In**: Present plan to user before implementing
+3. **Track Progress**: Mark items complete in both plan file and `tasks/todo.md`
+4. **Explain Changes**: High-level summary at each milestone
+5. **Capture Lessons**: Update `tasks/lessons.md` after every correction
 
 ## Core Principles
 
