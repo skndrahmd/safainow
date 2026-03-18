@@ -153,7 +153,7 @@ export default function CustomPackageScreen() {
             setCustomServices(
               selectedServices.map((s) => ({ id: s.id, name: s.name_en, price: s.price })),
             )
-            router.push('/booking/address')
+            router.back()
           }}
         >
           <Text
@@ -161,7 +161,7 @@ export default function CustomPackageScreen() {
               selected.size === 0 ? 'text-gray-400' : 'text-white'
             }`}
           >
-            Book Custom Package
+            Add to Cart
           </Text>
         </TouchableOpacity>
       </View>

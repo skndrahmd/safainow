@@ -8,6 +8,7 @@ import {
   RefreshControl,
 } from 'react-native'
 import { useRouter } from 'expo-router'
+import { Ionicons } from '@expo/vector-icons'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
 import { useBookingFlow } from '@/context/booking-flow'
@@ -19,13 +20,14 @@ type Package = Tables<'packages'>
 export default function HomeScreen() {
   const router = useRouter()
   const { session } = useAuth()
-  const { addPackage } = useBookingFlow()
+  const { addPackage, selectedPackages, customServices } = useBookingFlow()
   const [packages, setPackages] = useState<Package[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const firstName = session?.user.user_metadata?.full_name?.split(' ')[0] ?? 'there'
+  const cartCount = selectedPackages.length + customServices.length
 
   const fetchPackages = useCallback(async () => {
     const { data, error } = await supabase
@@ -52,24 +54,18 @@ export default function HomeScreen() {
     setRefreshing(false)
   }, [fetchPackages])
 
-  // Tapping the card body → Step 1 (package selection) for browsing
-  const handlePackagePress = (_pkg: Package) => {
-    router.push('/booking')
-  }
-
-  // Tapping the + button → quick-add that package, skip straight to address step
-  const handleQuickAdd = (pkg: Package) => {
-    addPackage({ id: pkg.id, name: pkg.name_en, price: pkg.price, type: pkg.type })
-    router.push('/booking/address')
-  }
-
-  // Tapping the eye icon → detail page
-  const handleViewDetail = (pkg: Package) => {
+  // Card body tap → open detail page
+  const handlePackagePress = (pkg: Package) => {
     if (pkg.type === 'custom') {
       router.push('/(app)/(home)/custom')
     } else {
       router.push(`/(app)/(home)/package/${pkg.id}`)
     }
+  }
+
+  // + button → add to cart, stay on home
+  const handleQuickAdd = (pkg: Package) => {
+    addPackage({ id: pkg.id, name: pkg.name_en, price: pkg.price, type: pkg.type })
   }
 
   if (loading) {
@@ -109,15 +105,31 @@ export default function HomeScreen() {
           price={item.price}
           type={item.type}
           onPress={() => handlePackagePress(item)}
-          onViewDetail={() => handleViewDetail(item)}
           onQuickAdd={() => handleQuickAdd(item)}
         />
       )}
       contentContainerClassName="px-5 pt-6 pb-10"
       ListHeaderComponent={
-        <View className="mb-6">
-          <Text className="text-2xl font-bold text-gray-900">Hello, {firstName} 👋</Text>
-          <Text className="mt-1 text-base text-gray-500">What would you like cleaned today?</Text>
+        <View className="mb-6 flex-row items-start justify-between">
+          <View className="flex-1">
+            <Text className="text-2xl font-bold text-gray-900">Hello, {firstName} 👋</Text>
+            <Text className="mt-1 text-base text-gray-500">
+              What would you like cleaned today?
+            </Text>
+          </View>
+
+          {/* Cart badge — visible when items in cart */}
+          {cartCount > 0 && (
+            <TouchableOpacity
+              onPress={() => router.push('/booking')}
+              className="relative ml-3 mt-1 h-10 w-10 items-center justify-center rounded-full bg-gray-900"
+            >
+              <Ionicons name="cart-outline" size={20} color="#ffffff" />
+              <View className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full bg-red-500">
+                <Text className="text-[10px] font-bold text-white">{cartCount}</Text>
+              </View>
+            </TouchableOpacity>
+          )}
         </View>
       }
       ListEmptyComponent={

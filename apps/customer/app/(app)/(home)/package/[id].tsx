@@ -132,10 +132,10 @@ export default function PackageDetailScreen() {
           className="items-center rounded-2xl bg-gray-900 py-4"
           onPress={() => {
             addPackage({ id: pkg.id, name: pkg.name_en, price: pkg.price, type: pkg.type })
-            router.push('/booking/address')
+            router.back()
           }}
         >
-          <Text className="text-base font-semibold text-white">Book This Package</Text>
+          <Text className="text-base font-semibold text-white">Add to Cart</Text>
         </TouchableOpacity>
       </View>
     </>

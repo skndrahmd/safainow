@@ -9,9 +9,8 @@ interface PackageCardProps {
   description: string
   price: number
   type: PackageType
-  onPress: () => void       // tap card body → booking flow (Sprint 2D)
-  onViewDetail: () => void  // tap eye icon → package detail page
-  onQuickAdd: () => void    // tap + button → quick-add to booking (Sprint 2D)
+  onPress: () => void      // tap card body → package detail page
+  onQuickAdd: () => void   // tap + button → add to cart (stay on screen)
 }
 
 const TYPE_BADGE: Record<PackageType, { label: string; className: string }> = {
@@ -26,7 +25,6 @@ export default function PackageCard({
   price,
   type,
   onPress,
-  onViewDetail,
   onQuickAdd,
 }: PackageCardProps) {
   const badge = TYPE_BADGE[type]
@@ -37,22 +35,11 @@ export default function PackageCard({
       onPress={onPress}
       activeOpacity={0.7}
     >
-      {/* Badge + eye icon row */}
-      <View className="mb-3 flex-row items-center justify-between">
-        <View className={`rounded-full px-3 py-1 ${badge.className}`}>
+      {/* Badge row */}
+      <View className="mb-3">
+        <View className={`self-start rounded-full px-3 py-1 ${badge.className}`}>
           <Text className="text-xs font-semibold text-white">{badge.label}</Text>
         </View>
-        {/* Eye icon — separate touch target, does not bubble to card press */}
-        <TouchableOpacity
-          onPress={(e) => {
-            e.stopPropagation()
-            onViewDetail()
-          }}
-          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
-          className="rounded-full p-1"
-        >
-          <Ionicons name="eye-outline" size={20} color="#6b7280" />
-        </TouchableOpacity>
       </View>
 
       {/* Name */}

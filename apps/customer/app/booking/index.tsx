@@ -79,7 +79,7 @@ export default function PackageSelectionScreen() {
   if (loading) {
     return (
       <View className="flex-1 items-center justify-center bg-white">
-        <Stack.Screen options={{ headerShown: true, title: 'Select Package' }} />
+        <Stack.Screen options={{ headerShown: true, title: 'Your Cart' }} />
         <ActivityIndicator size="large" color="#111827" />
       </View>
     )
@@ -90,8 +90,8 @@ export default function PackageSelectionScreen() {
       <Stack.Screen
         options={{
           headerShown: true,
-          title: 'Select Package',
-          headerBackTitle: 'Cancel',
+          title: 'Your Cart',
+          headerBackTitle: 'Back',
           headerShadowVisible: false,
           headerStyle: { backgroundColor: '#ffffff' },
           headerTitleStyle: { fontWeight: '700', color: '#111827' },
@@ -104,7 +104,7 @@ export default function PackageSelectionScreen() {
         className="bg-white"
         ListHeaderComponent={
           <Text className="mb-4 text-sm text-gray-500">
-            Pick one cleaning package, optionally add Clothes Washing & Drying, or build your own.
+            Review your selection. Tap a package to add or remove it.
           </Text>
         }
         renderItem={({ item }) => {
@@ -150,7 +150,7 @@ export default function PackageSelectionScreen() {
           <Text
             className={`text-base font-semibold ${canProceed ? 'text-white' : 'text-gray-400'}`}
           >
-            Next: Address
+            Proceed to Address
           </Text>
         </TouchableOpacity>
       </View>
