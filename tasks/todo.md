@@ -114,31 +114,29 @@
 - [x] Custom package builder `app/(app)/(home)/custom.tsx` — 15 service checklist, live running total, CTA disabled until ≥1 selected
 - [x] `components/ServiceItem.tsx` — service row with circular checkbox + price
 
-### 🔲 Customer App — Booking Flow
-- [ ] `context/booking-flow.tsx` — BookingFlowContext: selected packages, custom service ids, total price, address, booking type, scheduled_at
-- [ ] Booking flow stack `app/booking/_layout.tsx` (modal stack)
-- [ ] Step 1 — Package selection `app/booking/index.tsx`:
-  - [ ] Show all active non-custom packages as selectable cards
-  - [ ] Enforce combination rules in UI: only one cleaning package; standalone can combine with cleaning; selecting custom clears all others
-  - [ ] "Customise" option navigates to custom builder
-  - [ ] Live total price shown at bottom
-  - [ ] "Next" navigates to address step
-- [ ] Step 2 — Address selection `app/booking/address.tsx`:
-  - [ ] List saved addresses from customer_addresses (default highlighted)
-  - [ ] "Use my current location" button → expo-location GPS → reverse geocode → fill address
-  - [ ] "Add new address" inline form (address text, label picker: Home/Work/Parents House/Other)
-  - [ ] Save new address to customer_addresses
-  - [ ] Tap saved address to select it; "Next" proceeds
-- [ ] Step 3 — Booking type `app/booking/schedule.tsx`:
-  - [ ] "Instant" option (book for right now)
-  - [ ] "Scheduled" option → date + time picker (expo-date-picker or react-native DateTimePicker)
-  - [ ] "Recurring" option — show "Coming soon" (Sprint 5)
-  - [ ] "Next" proceeds
-- [ ] Step 4 — Order summary `app/booking/summary.tsx`:
-  - [ ] Show selected packages + services + price breakdown
-  - [ ] Show selected address + booking type
-  - [ ] "Book Now" button → calls POST /api/bookings → navigates to post-booking screen
-  - [ ] Error handling: show API error message
+### ✅ Customer App — Booking Flow (2D-frontend)
+- [x] `context/booking-flow.tsx` — BookingFlowContext: selected packages, custom services, total price, address (text + GPS coords + label), booking type, scheduled_at; reset()
+- [x] Booking flow stack `app/booking/_layout.tsx` — modal Stack wrapping BookingFlowProvider
+- [x] Step 1 — Package selection `app/booking/index.tsx`:
+  - [x] Show all active packages as selectable cards
+  - [x] Combination rules enforced: only one cleaning; standalone can combine with cleaning; custom clears all others
+  - [x] "Next: Address" CTA disabled until ≥1 package selected
+- [x] Step 2 — Address `app/booking/address.tsx`:
+  - [x] Manual text input for full address (min 5 chars to proceed)
+  - [x] GPS button → expo-location getCurrentPositionAsync → stores lat/lng
+  - [x] Optional label picker (Home / Work / Parents' / Other)
+  - [x] "Next: Schedule" CTA
+- [x] Step 3 — Schedule `app/booking/schedule.tsx`:
+  - [x] "Book Now" (instant) vs "Schedule for Later" selection
+  - [x] Date-time picker via @react-native-community/datetimepicker (iOS spinner / Android modal)
+  - [x] "Review Order" CTA
+- [x] Step 4 — Order summary `app/booking/summary.tsx`:
+  - [x] Selected packages + custom services + price breakdown
+  - [x] Address + booking type/date shown
+  - [x] Cash payment note
+  - [x] "Book Now" button → POST /bookings (API_URL from EXPO_PUBLIC_API_URL) → dismissAll + success alert
+  - [x] Error handling: shows API error in Alert
+- [x] Home screen card tap / + button now opens booking modal (removed Coming Soon)
 
 ### 🔲 Customer App — Post-Booking
 - [ ] Post-booking / matching status screen `app/booking/matching.tsx`:

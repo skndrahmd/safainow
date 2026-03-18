@@ -6,7 +6,6 @@ import {
   ActivityIndicator,
   TouchableOpacity,
   RefreshControl,
-  Alert,
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { supabase } from '@/lib/supabase'
@@ -51,9 +50,9 @@ export default function HomeScreen() {
     setRefreshing(false)
   }, [fetchPackages])
 
-  // Tapping the card body or + button → booking flow (Coming Soon until Sprint 2D)
+  // Tapping the card body or + button → opens booking flow
   const handlePackagePress = (_pkg: Package) => {
-    Alert.alert('Coming Soon', 'Booking flow will be available in the next update.')
+    router.push('/booking')
   }
 
   // Tapping the eye icon → detail page
