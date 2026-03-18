@@ -106,13 +106,13 @@
 - [x] Google OAuth via expo-web-browser + expo-auth-session → supabase.auth.signInWithOAuth
 - [x] Session persistence on app restart (Supabase client handles via expo-secure-store)
 
-### 🔲 Customer App — Homepage & Package Browsing
-- [ ] Home stack layout `app/(app)/(home)/_layout.tsx`
-- [ ] Homepage `app/(app)/(home)/index.tsx` — fetch active packages, show PackageCard grid
-- [ ] `components/PackageCard.tsx` — package name, type badge, price, tap to navigate to detail
-- [ ] Package detail `app/(app)/(home)/package/[id].tsx` — name, description, full service list, price, "Book This Package" button
-- [ ] Custom package builder `app/(app)/(home)/custom.tsx` — list all active services with checkboxes, live running total, "Book Custom" button
-- [ ] `components/ServiceItem.tsx` — service row with checkbox + price
+### ✅ Customer App — Homepage & Package Browsing
+- [x] Home stack layout `app/(app)/(home)/_layout.tsx`
+- [x] Homepage `app/(app)/(home)/index.tsx` — greets user by name, FlatList of active packages, pull-to-refresh, loading/error/empty states
+- [x] `components/PackageCard.tsx` — type badge, name, description, price; eye icon → detail page; card tap → Coming Soon (wired in 2D)
+- [x] Package detail `app/(app)/(home)/package/[id].tsx` — name, description, services with checkmarks, sticky price footer, "Book This Package" CTA
+- [x] Custom package builder `app/(app)/(home)/custom.tsx` — 15 service checklist, live running total, CTA disabled until ≥1 selected
+- [x] `components/ServiceItem.tsx` — service row with circular checkbox + price
 
 ### 🔲 Customer App — Booking Flow
 - [ ] `context/booking-flow.tsx` — BookingFlowContext: selected packages, custom service ids, total price, address, booking type, scheduled_at
