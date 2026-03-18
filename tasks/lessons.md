@@ -39,6 +39,27 @@
 **Rule:** Before any feature work, read all files in docs/ in order (00 through 07). They are the source of truth for product decisions.
 **Applies to:** Every new feature or screen implementation.
 
+## L012 — ALWAYS web search before implementing anything, and verify it works 100%
+**What happened:** Implemented features using training data knowledge without searching first. This leads to outdated APIs, wrong package versions, broken patterns, and wasted time debugging.
+**Rule:** Before writing ANY code or running ANY command for a feature:
+  1. Web search the exact library/API/pattern being used — no exceptions
+  2. Search for the specific version combination in use (e.g. "expo-router v4 expo SDK 55 setup 2025")
+  3. Cross-check official docs + recent community reports for known issues
+  4. Only then write code that matches the current, verified documentation
+  5. After implementing, run tsc --noEmit + manual verification to confirm it actually works
+  6. Never mark a task done without proof it works (no TypeScript errors, app runs, feature behaves correctly)
+**Applies to:** Every single implementation step. Even "simple" things like package installs and config changes.
+
+## L011 — Execute sprints one sub-part at a time, not all at once
+**What happened:** Tried to write a single massive plan for the entire Sprint 2 (30+ tasks across 6 subsystems) in one go. This is hard to review, approve, and track.
+**Rule:** Break every sprint into focused sub-parts (e.g. Sprint 2A Shared Infrastructure, Sprint 2B App Bootstrap, Sprint 2C Booking Flow, etc.). For each sub-part:
+  1. Write the plan for ONLY that sub-part
+  2. Present it to the user and wait for approval
+  3. Execute it fully (all tasks + commits)
+  4. Verify it (tsc --noEmit, manual checks)
+  5. Then and only then move to the next sub-part
+**Applies to:** Every sprint and every multi-subsystem feature. Never plan an entire sprint in one document.
+
 ## L010 — Follow the FULL CLAUDE.md workflow, not just selected parts
 **What happened:** Repeatedly acknowledged CLAUDE.md rules verbally but did not actually apply them — skipped plan mode, skipped subagent strategy, skipped writing to tasks/todo.md before acting.
 **Rule:** CLAUDE.md is not a reference document — it is a binding workflow. Every rule must be applied on every task:

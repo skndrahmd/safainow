@@ -80,25 +80,25 @@
 
 ## Sprint 2 — Customer App (Core Booking Loop)
 
-### 🔲 Shared Infrastructure
-- [ ] `packages/constants/src/index.ts` — COMMISSION_RATE (0.25), PARTNER_AMOUNT_RATE (0.75), CANCELLATION_WINDOW_MS (15 * 60 * 1000), BOOKING_RADIUS_METRES
-- [ ] `packages/validators/src/index.ts` — BookingCreateSchema (Zod): package_ids, custom_service_ids, address fields, booking_type, scheduled_at
-- [ ] DB migration: customer auto-creation trigger (insert into customers on auth.users insert)
-- [ ] DB migration: RLS policies — packages/services allow anon SELECT; customers allow own SELECT/UPDATE; customer_addresses allow own CRUD; bookings allow own SELECT; booking_packages/booking_custom_services/booking_timeline allow own SELECT
+### ✅ Shared Infrastructure
+- [x] `packages/constants/src/index.ts` — COMMISSION_RATE (0.25), PARTNER_AMOUNT_RATE (0.75), CANCELLATION_WINDOW_MS (15 * 60 * 1000), BOOKING_RADIUS_METRES
+- [x] `packages/validators/src/index.ts` — BookingCreateSchema (Zod): package_ids, custom_service_ids, address fields, booking_type, scheduled_at
+- [x] DB migration: customer auto-creation trigger (insert into customers on auth.users insert)
+- [x] DB migration: RLS policies — packages/services allow anon SELECT; customers allow own SELECT/UPDATE; customer_addresses allow own CRUD; bookings allow own SELECT; booking_packages/booking_custom_services/booking_timeline allow own SELECT
 
-### 🔲 Customer App — Navigation Setup
-- [ ] Install and configure Expo Router v4 (change `main` to `expo-router/entry`, add scheme + plugin to app.json)
-- [ ] Add `@/*` path alias to tsconfig.json
-- [ ] Root layout `app/_layout.tsx`: import global.css, wrap AuthProvider, session guard (redirect to login if no session)
-- [ ] Auth stack layout `app/(auth)/_layout.tsx`
-- [ ] App tabs layout `app/(app)/_layout.tsx` — bottom tabs: Home, Bookings, Profile
+### ✅ Customer App — Navigation Setup
+- [x] Install and configure Expo Router v4 (change `main` to `expo-router/entry`, add scheme + plugin to app.json)
+- [x] Add `@/*` path alias to tsconfig.json
+- [x] Root layout `app/_layout.tsx`: import global.css, wrap AuthProvider, session guard (redirect to login if no session)
+- [x] Auth stack layout `app/(auth)/_layout.tsx`
+- [x] App tabs layout `app/(app)/_layout.tsx` — bottom tabs: Home, Bookings, Profile
 
-### 🔲 Customer App — Auth
-- [ ] `lib/auth.tsx` — AuthContext: session, loading, signOut; useAuth hook
-- [ ] Login screen `app/(auth)/login.tsx` — email + password form, "Sign in with Google" button, link to signup
-- [ ] Signup screen `app/(auth)/signup.tsx` — full name, email, password, confirm password
-- [ ] Google OAuth via expo-web-browser + expo-auth-session → supabase.auth.signInWithOAuth
-- [ ] Session persistence on app restart (Supabase client handles via expo-secure-store)
+### ✅ Customer App — Auth
+- [x] `lib/auth.tsx` — AuthContext: session, loading, signOut; useAuth hook
+- [x] Login screen `app/(auth)/sign-in.tsx` — email + password form, "Sign in with Google" button, link to signup
+- [x] Signup screen `app/(auth)/sign-up.tsx` — full name, email, password, confirm password
+- [x] Google OAuth via expo-web-browser + expo-auth-session → supabase.auth.signInWithOAuth
+- [x] Session persistence on app restart (Supabase client handles via expo-secure-store)
 
 ### 🔲 Customer App — Homepage & Package Browsing
 - [ ] Home stack layout `app/(app)/(home)/_layout.tsx`
