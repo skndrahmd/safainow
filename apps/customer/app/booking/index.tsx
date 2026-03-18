@@ -26,6 +26,7 @@ export default function PackageSelectionScreen() {
       .from('packages')
       .select('*')
       .eq('is_active', true)
+      .neq('type', 'custom')
       .order('created_at', { ascending: true })
     setPackages(data ?? [])
     setLoading(false)
