@@ -82,9 +82,11 @@ export default function SummaryScreen() {
         {flow.selectedPackages.map((pkg) => (
           <View key={pkg.id} className="mb-2 flex-row items-center justify-between">
             <Text className="text-base text-gray-900">{pkg.name}</Text>
-            <Text className="text-base font-semibold text-gray-900">
-              Rs {pkg.price.toLocaleString()}
-            </Text>
+            {pkg.type !== 'custom' && (
+              <Text className="text-base font-semibold text-gray-900">
+                Rs {pkg.price.toLocaleString()}
+              </Text>
+            )}
           </View>
         ))}
 

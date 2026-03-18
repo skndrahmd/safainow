@@ -78,12 +78,12 @@ export function BookingFlowProvider({ children }: { children: ReactNode }) {
         const next = prev.selectedPackages
           .filter((p) => p.type !== 'cleaning' && p.type !== 'custom')
           .concat(pkg)
-        return { ...prev, selectedPackages: next }
+        return { ...prev, selectedPackages: next, customServices: [] }
       }
       if (pkg.type === 'standalone') {
         const withoutCustom = prev.selectedPackages.filter((p) => p.type !== 'custom')
         if (withoutCustom.some((p) => p.id === pkg.id)) return prev
-        return { ...prev, selectedPackages: [...withoutCustom, pkg] }
+        return { ...prev, selectedPackages: [...withoutCustom, pkg], customServices: [] }
       }
       return prev
     })
