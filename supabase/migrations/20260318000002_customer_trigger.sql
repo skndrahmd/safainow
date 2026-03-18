@@ -11,10 +11,9 @@ SECURITY DEFINER
 SET search_path = public
 AS $$
 BEGIN
-  INSERT INTO public.customers (id, email, full_name)
+  INSERT INTO public.customers (id, full_name)
   VALUES (
     NEW.id,
-    NEW.email,
     COALESCE(NEW.raw_user_meta_data->>'full_name', '')
   )
   ON CONFLICT (id) DO NOTHING;
