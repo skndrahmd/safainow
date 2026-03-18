@@ -20,14 +20,15 @@ type Package = Tables<'packages'>
 export default function HomeScreen() {
   const router = useRouter()
   const { session } = useAuth()
-  const { addPackage, selectedPackages, customServices } = useBookingFlow()
+  const { addPackage, selectedPackages } = useBookingFlow()
   const [packages, setPackages] = useState<Package[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
   const [error, setError] = useState<string | null>(null)
 
   const firstName = session?.user.user_metadata?.full_name?.split(' ')[0] ?? 'there'
-  const cartCount = selectedPackages.length + customServices.length
+  const hasCustom = selectedPackages.some((p) => p.type === 'custom')
+  const cartCount = hasCustom ? 0 : selectedPackages.length
 
   const fetchPackages = useCallback(async () => {
     const { data, error } = await supabase
@@ -54,8 +55,8 @@ export default function HomeScreen() {
     setRefreshing(false)
   }, [fetchPackages])
 
-  // Card body tap → open detail page
-  const handlePackagePress = (pkg: Package) => {
+  // Eye/chevron icon → open detail page or custom builder
+  const handleViewDetail = (pkg: Package) => {
     if (pkg.type === 'custom') {
       router.push('/(app)/(home)/custom')
     } else {
@@ -104,7 +105,7 @@ export default function HomeScreen() {
           description={item.description_en}
           price={item.price}
           type={item.type}
-          onPress={() => handlePackagePress(item)}
+          onViewDetail={() => handleViewDetail(item)}
           onQuickAdd={() => handleQuickAdd(item)}
         />
       )}

@@ -9,8 +9,8 @@ interface PackageCardProps {
   description: string
   price: number
   type: PackageType
-  onPress: () => void      // tap card body → package detail page
-  onQuickAdd: () => void   // tap + button → add to cart (stay on screen)
+  onViewDetail: () => void  // eye icon (pre-built) or chevron (custom) → detail/builder page
+  onQuickAdd: () => void    // + button → add to cart (pre-built only)
 }
 
 const TYPE_BADGE: Record<PackageType, { label: string; className: string }> = {
@@ -24,22 +24,29 @@ export default function PackageCard({
   description,
   price,
   type,
-  onPress,
+  onViewDetail,
   onQuickAdd,
 }: PackageCardProps) {
   const badge = TYPE_BADGE[type]
 
   return (
-    <TouchableOpacity
-      className="mb-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm"
-      onPress={onPress}
-      activeOpacity={0.7}
-    >
-      {/* Badge row */}
-      <View className="mb-3">
-        <View className={`self-start rounded-full px-3 py-1 ${badge.className}`}>
+    <View className="mb-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+      {/* Badge + detail icon row */}
+      <View className="mb-3 flex-row items-center justify-between">
+        <View className={`rounded-full px-3 py-1 ${badge.className}`}>
           <Text className="text-xs font-semibold text-white">{badge.label}</Text>
         </View>
+        <TouchableOpacity
+          onPress={onViewDetail}
+          hitSlop={{ top: 10, bottom: 10, left: 10, right: 10 }}
+          className="rounded-full p-1"
+        >
+          <Ionicons
+            name={type === 'custom' ? 'chevron-forward' : 'eye-outline'}
+            size={20}
+            color="#6b7280"
+          />
+        </TouchableOpacity>
       </View>
 
       {/* Name */}
@@ -55,10 +62,7 @@ export default function PackageCard({
         <Text className="text-base font-semibold text-gray-900">Rs {price.toLocaleString()}</Text>
         {type !== 'custom' && (
           <TouchableOpacity
-            onPress={(e) => {
-              e.stopPropagation()
-              onQuickAdd()
-            }}
+            onPress={onQuickAdd}
             hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
             className="h-9 w-9 items-center justify-center rounded-full bg-gray-900"
           >
@@ -66,6 +70,6 @@ export default function PackageCard({
           </TouchableOpacity>
         )}
       </View>
-    </TouchableOpacity>
+    </View>
   )
 }
