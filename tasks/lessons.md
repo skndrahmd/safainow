@@ -60,6 +60,23 @@
   5. Then and only then move to the next sub-part
 **Applies to:** Every sprint and every multi-subsystem feature. Never plan an entire sprint in one document.
 
+## L013 — Expo in pnpm monorepo requires node-linker=hoisted + metro watchFolders
+**What happened:** Metro bundler failed with "Unable to resolve react-native" from files inside nested route groups, even though other files in the same app resolved fine. Root cause: pnpm's default isolated/symlinked node_modules layout breaks Metro's module resolver for deeply nested files.
+**Rule:** Every Expo app in a pnpm monorepo requires two things:
+  1. Root `.npmrc` must contain `node-linker=hoisted` — hoists all packages to a flat node_modules layout
+  2. Each `metro.config.js` must include monorepo-aware config:
+     ```js
+     const monorepoRoot = path.resolve(__dirname, '../..');
+     config.watchFolders = [monorepoRoot];
+     config.resolver.nodeModulesPaths = [
+       path.resolve(__dirname, 'node_modules'),
+       path.resolve(monorepoRoot, 'node_modules'),
+     ];
+     ```
+  3. Run `pnpm install` after adding `node-linker=hoisted` to apply the new layout.
+  4. Clear Metro cache on first run: `pnpm --filter <app> dev -- --clear`
+**Applies to:** Any new Expo app added to the monorepo. Fix partner app metro.config.js at the same time.
+
 ## L010 — Follow the FULL CLAUDE.md workflow, not just selected parts
 **What happened:** Repeatedly acknowledged CLAUDE.md rules verbally but did not actually apply them — skipped plan mode, skipped subagent strategy, skipped writing to tasks/todo.md before acting.
 **Rule:** CLAUDE.md is not a reference document — it is a binding workflow. Every rule must be applied on every task:
