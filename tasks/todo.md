@@ -128,7 +128,7 @@
   - [x] "Next: Schedule" CTA
 - [x] Step 3 — Schedule `app/booking/schedule.tsx`:
   - [x] "Book Now" (instant) vs "Schedule for Later" selection
-  - [x] Date-time picker via @react-native-community/datetimepicker (iOS spinner / Android modal)
+  - [x] Date-time picker via @react-native-community/datetimepicker (iOS spinner / Android split date+time)
   - [x] "Review Order" CTA
 - [x] Step 4 — Order summary `app/booking/summary.tsx`:
   - [x] Selected packages + custom services + price breakdown
@@ -136,7 +136,16 @@
   - [x] Cash payment note
   - [x] "Book Now" button → POST /bookings (API_URL from EXPO_PUBLIC_API_URL) → dismissAll + success alert
   - [x] Error handling: shows API error in Alert
-- [x] Home screen card tap / + button now opens booking modal (removed Coming Soon)
+
+### ✅ Customer App — Cart UX & Polish (2D-frontend-polish)
+- [x] Home screen = cart: + button adds to cart, eye icon views detail, card body not tappable
+- [x] Custom package bypasses cart → goes directly from builder to address
+- [x] Package deselection: tappable green checkmark removes package from cart (`removePackage` in context)
+- [x] Cart strip at bottom of home screen: shows count + total, chevron arrow, taps → address page directly
+- [x] Cart strip hidden when custom package is selected
+- [x] Custom package card shows "Variable cost" instead of "Rs 0"
+- [x] Safe area handling: `SafeAreaProvider` at root, `useSafeAreaInsets()` on home screen, `SafeAreaView` on auth screens
+- [x] Android DateTimePicker fix: split `mode="datetime"` into separate date → time pickers (fixes "dismiss of undefined" crash)
 
 ### 🔲 Customer App — Post-Booking
 - [ ] Post-booking / matching status screen `app/booking/matching.tsx`:

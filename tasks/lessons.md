@@ -126,6 +126,26 @@
 **Rule:** Add `"check-types": "tsc --noEmit"` and `"lint": "eslint ."` to every app's package.json at creation time. Without these, the turbo CI pipeline silently skips type checking and linting for those apps.
 **Applies to:** Every new app added to the monorepo.
 
+## L021 — Don't use BottomTabBar from @react-navigation/bottom-tabs in custom tabBar
+**What happened:** Tried to render a custom `tabBar` for Expo Router `<Tabs>` using `BottomTabBar` from `@react-navigation/bottom-tabs`. Crashed with `useFrameSize must be used within a FrameSizeProvider` because `BottomTabBar` expects a context provided by the navigator's internal rendering, not available when used directly.
+**Rule:** Don't import `BottomTabBar` for custom tab bars. Instead, render UI elements inside individual screens (e.g., absolute-positioned strips) or build a fully custom tab bar from scratch.
+**Applies to:** Any Expo Router tab layout customization.
+
+## L022 — Wrapping Expo Router <Tabs> in a <View> breaks touch propagation
+**What happened:** Wrapped `<Tabs>` in `<View className="flex-1">` to add an absolute-positioned cart strip as a sibling. This caused eye icons and other buttons on screen content to become untappable.
+**Rule:** Never wrap `<Tabs>` in an extra View with absolute-positioned siblings. Instead, place overlay UI inside individual tab screens. `pointerEvents="box-none"` does not reliably fix the issue.
+**Applies to:** Any layout where UI needs to overlay tab content.
+
+## L023 — Android DateTimePicker crashes with mode="datetime"
+**What happened:** `@react-native-community/datetimepicker` v9.x on Android crashes with "Cannot read property 'dismiss' of undefined" when using `mode="datetime"`. The chained date→time picker fails on the second step.
+**Rule:** On Android, split into two sequential pickers: show `mode="date"` first, then on date selection show `mode="time"`. iOS `mode="datetime"` with `display="spinner"` works fine.
+**Applies to:** Any use of DateTimePicker on Android.
+
+## L024 — SafeAreaView from react-native-safe-area-context may not work with NativeWind className
+**What happened:** Wrapped home screen in `<SafeAreaView className="flex-1 bg-white" edges={['top']}>`. Buttons at the top were still not tappable. Switching to `useSafeAreaInsets()` hook + manual `contentContainerStyle={{ paddingTop: insets.top }}` on FlatList fixed the issue.
+**Rule:** Prefer `useSafeAreaInsets()` hook with manual padding over `SafeAreaView` wrapper, especially on screens with FlatList. Apply insets via `contentContainerStyle` on the scroll view, not as a wrapper component.
+**Applies to:** Any screen needing safe area handling in Expo + NativeWind apps.
+
 ## L010 — Follow the FULL CLAUDE.md workflow, not just selected parts
 **What happened:** Repeatedly acknowledged CLAUDE.md rules verbally but did not actually apply them — skipped plan mode, skipped subagent strategy, skipped writing to tasks/todo.md before acting.
 **Rule:** CLAUDE.md is not a reference document — it is a binding workflow. Every rule must be applied on every task:

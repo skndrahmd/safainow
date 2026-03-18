@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { Link } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import { supabase } from '@/lib/supabase'
 
 const ADMIN_URL = process.env.EXPO_PUBLIC_ADMIN_URL ?? 'http://localhost:3000'
@@ -67,7 +68,7 @@ export default function SignUpScreen() {
   // ── Success state ──────────────────────────────────────────────────
   if (confirmedEmail) {
     return (
-      <View className="flex-1 items-center justify-center bg-white px-6">
+      <SafeAreaView className="flex-1 items-center justify-center bg-white px-6">
         <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-gray-100">
           <Text className="text-4xl">📧</Text>
         </View>
@@ -88,14 +89,15 @@ export default function SignUpScreen() {
             <Text className="text-base font-semibold text-white">Go to Sign In</Text>
           </TouchableOpacity>
         </Link>
-      </View>
+      </SafeAreaView>
     )
   }
 
   // ── Sign-up form ───────────────────────────────────────────────────
   return (
+    <SafeAreaView className="flex-1 bg-white">
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -187,5 +189,6 @@ export default function SignUpScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }

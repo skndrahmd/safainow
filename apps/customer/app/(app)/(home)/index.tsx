@@ -9,6 +9,7 @@ import {
 } from 'react-native'
 import { useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
 import { useBookingFlow } from '@/context/booking-flow'
@@ -19,8 +20,9 @@ type Package = Tables<'packages'>
 
 export default function HomeScreen() {
   const router = useRouter()
+  const insets = useSafeAreaInsets()
   const { session } = useAuth()
-  const { addPackage, selectedPackages } = useBookingFlow()
+  const { addPackage, removePackage, selectedPackages, totalPrice } = useBookingFlow()
   const [packages, setPackages] = useState<Package[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -79,7 +81,10 @@ export default function HomeScreen() {
 
   if (error) {
     return (
-      <View className="flex-1 items-center justify-center bg-white px-6">
+      <View
+        className="flex-1 items-center justify-center bg-white px-6"
+        style={{ paddingTop: insets.top }}
+      >
         <Text className="mb-4 text-center text-base text-gray-500">{error}</Text>
         <TouchableOpacity
           className="rounded-xl bg-gray-900 px-6 py-3"
@@ -95,51 +100,64 @@ export default function HomeScreen() {
   }
 
   return (
-    <FlatList
-      data={packages}
-      keyExtractor={(item) => item.id}
-      renderItem={({ item }) => (
-        <PackageCard
-          id={item.id}
-          name={item.name_en}
-          description={item.description_en}
-          price={item.price}
-          type={item.type}
-          inCart={selectedPackages.some((p) => p.id === item.id)}
-          onViewDetail={() => handleViewDetail(item)}
-          onQuickAdd={() => handleQuickAdd(item)}
-        />
-      )}
-      contentContainerClassName="px-5 pt-6 pb-10"
-      ListHeaderComponent={
-        <View className="mb-6 flex-row items-start justify-between">
-          <View className="flex-1">
+    <View className="flex-1 bg-white">
+      <FlatList
+        data={packages}
+        keyExtractor={(item) => item.id}
+        renderItem={({ item }) => (
+          <PackageCard
+            id={item.id}
+            name={item.name_en}
+            description={item.description_en}
+            price={item.price}
+            type={item.type}
+            inCart={selectedPackages.some((p) => p.id === item.id)}
+            onViewDetail={() => handleViewDetail(item)}
+            onQuickAdd={() => handleQuickAdd(item)}
+            onRemove={() => removePackage(item.id)}
+          />
+        )}
+        contentContainerStyle={{
+          paddingTop: insets.top + 24,
+          paddingBottom: cartCount > 0 ? 96 : 40,
+          paddingHorizontal: 20,
+        }}
+        ListHeaderComponent={
+          <View className="mb-6">
             <Text className="text-2xl font-bold text-gray-900">Hello, {firstName} 👋</Text>
             <Text className="mt-1 text-base text-gray-500">
               What would you like cleaned today?
             </Text>
           </View>
+        }
+        ListEmptyComponent={
+          <View className="items-center pt-16">
+            <Text className="text-base text-gray-400">No packages available right now.</Text>
+          </View>
+        }
+        refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
+      />
 
-          {/* Cart badge — visible when items in cart */}
-          {cartCount > 0 && (
-            <TouchableOpacity
-              onPress={() => router.push('/booking')}
-              className="relative ml-3 mt-1 h-10 w-10 items-center justify-center rounded-full bg-gray-900"
-            >
-              <Ionicons name="cart-outline" size={20} color="#ffffff" />
-              <View className="absolute -right-1 -top-1 h-5 w-5 items-center justify-center rounded-full bg-red-500">
-                <Text className="text-[10px] font-bold text-white">{cartCount}</Text>
-              </View>
-            </TouchableOpacity>
-          )}
-        </View>
-      }
-      ListEmptyComponent={
-        <View className="items-center pt-16">
-          <Text className="text-base text-gray-400">No packages available right now.</Text>
-        </View>
-      }
-      refreshControl={<RefreshControl refreshing={refreshing} onRefresh={onRefresh} />}
-    />
+      {cartCount > 0 && (
+        <TouchableOpacity
+          onPress={() => router.push('/booking/address')}
+          activeOpacity={0.85}
+          className="absolute bottom-0 left-0 right-0 flex-row items-center justify-between bg-gray-900 px-5 py-3.5"
+        >
+          <View className="flex-row items-center gap-2">
+            <Ionicons name="cart-outline" size={20} color="#ffffff" />
+            <Text className="text-sm font-semibold text-white">
+              {cartCount} {cartCount === 1 ? 'package' : 'packages'}
+            </Text>
+          </View>
+          <View className="flex-row items-center gap-1">
+            <Text className="text-sm font-bold text-white">
+              Rs {totalPrice.toLocaleString()}
+            </Text>
+            <Ionicons name="chevron-forward" size={18} color="#ffffff" />
+          </View>
+        </TouchableOpacity>
+      )}
+    </View>
   )
 }

@@ -33,6 +33,8 @@ type BookingFlowContextValue = BookingFlowState & {
   setCustomServices: (services: ServiceSnapshot[]) => void
   /** Add a package applying combination rules (safe to call from anywhere outside the flow) */
   addPackage: (pkg: PackageSnapshot) => void
+  /** Remove a package by ID */
+  removePackage: (id: string) => void
   setAddress: (params: {
     text: string
     latitude: number
@@ -88,6 +90,12 @@ export function BookingFlowProvider({ children }: { children: ReactNode }) {
       return prev
     })
 
+  const removePackage = (id: string) =>
+    setState((prev) => ({
+      ...prev,
+      selectedPackages: prev.selectedPackages.filter((p) => p.id !== id),
+    }))
+
   const setCustomServices = (services: ServiceSnapshot[]) =>
     setState((prev) => ({ ...prev, customServices: services }))
 
@@ -126,6 +134,7 @@ export function BookingFlowProvider({ children }: { children: ReactNode }) {
         setSelectedPackages,
         setCustomServices,
         addPackage,
+        removePackage,
         setAddress,
         setBookingType,
         setScheduledAt,

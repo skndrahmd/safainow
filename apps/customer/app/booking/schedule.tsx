@@ -8,7 +8,7 @@ export default function ScheduleScreen() {
   const router = useRouter()
   const { bookingType, scheduledAt, setBookingType, setScheduledAt } = useBookingFlow()
 
-  const [showPicker, setShowPicker] = useState(false)
+  const [androidPickerMode, setAndroidPickerMode] = useState<'date' | 'time' | null>(null)
   const [pickedDate, setPickedDate] = useState<Date>(
     scheduledAt ? new Date(scheduledAt) : new Date(Date.now() + 60 * 60 * 1000),
   )
@@ -19,7 +19,16 @@ export default function ScheduleScreen() {
   }
 
   const handleDateChange = (_: unknown, date?: Date) => {
-    if (Platform.OS === 'android') setShowPicker(false)
+    if (Platform.OS === 'android') {
+      if (androidPickerMode === 'date' && date) {
+        // Date selected — now show time picker
+        setPickedDate(date)
+        setAndroidPickerMode('time')
+        return
+      }
+      // Time selected (or dismissed) — finalize
+      setAndroidPickerMode(null)
+    }
     if (date) {
       setPickedDate(date)
       setScheduledAt(date.toISOString())
@@ -82,7 +91,7 @@ export default function ScheduleScreen() {
             ) : (
               <>
                 <TouchableOpacity
-                  onPress={() => setShowPicker(true)}
+                  onPress={() => setAndroidPickerMode('date')}
                   className="rounded-xl border border-gray-200 bg-gray-50 px-4 py-3"
                 >
                   <Text className="text-base text-gray-900">
@@ -91,10 +100,10 @@ export default function ScheduleScreen() {
                       : 'Tap to pick date & time'}
                   </Text>
                 </TouchableOpacity>
-                {showPicker && (
+                {androidPickerMode !== null && (
                   <DateTimePicker
                     value={pickedDate}
-                    mode="datetime"
+                    mode={androidPickerMode}
                     display="default"
                     minimumDate={new Date()}
                     onChange={handleDateChange}

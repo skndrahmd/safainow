@@ -12,6 +12,7 @@ interface PackageCardProps {
   inCart: boolean
   onViewDetail: () => void  // eye icon (pre-built) or chevron (custom) → detail/builder page
   onQuickAdd: () => void    // + button → add to cart (pre-built only)
+  onRemove: () => void      // checkmark button → remove from cart
 }
 
 const TYPE_BADGE: Record<PackageType, { label: string; className: string }> = {
@@ -28,6 +29,7 @@ export default function PackageCard({
   inCart,
   onViewDetail,
   onQuickAdd,
+  onRemove,
 }: PackageCardProps) {
   const badge = TYPE_BADGE[type]
 
@@ -65,12 +67,18 @@ export default function PackageCard({
 
       {/* Price row — price left, + button or checkmark right */}
       <View className="flex-row items-center justify-between">
-        <Text className="text-base font-semibold text-gray-900">Rs {price.toLocaleString()}</Text>
+        <Text className="text-base font-semibold text-gray-900">
+          {type === 'custom' ? 'Variable cost' : `Rs ${price.toLocaleString()}`}
+        </Text>
         {type !== 'custom' &&
           (inCart ? (
-            <View className="h-9 w-9 items-center justify-center rounded-full bg-green-600">
+            <TouchableOpacity
+              onPress={onRemove}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              className="h-9 w-9 items-center justify-center rounded-full bg-green-600"
+            >
               <Ionicons name="checkmark" size={20} color="#ffffff" />
-            </View>
+            </TouchableOpacity>
           ) : (
             <TouchableOpacity
               onPress={onQuickAdd}

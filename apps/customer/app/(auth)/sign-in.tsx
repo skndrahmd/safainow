@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { Link } from 'expo-router'
+import { SafeAreaView } from 'react-native-safe-area-context'
 import * as WebBrowser from 'expo-web-browser'
 import * as AuthSession from 'expo-auth-session'
 import { supabase } from '@/lib/supabase'
@@ -86,8 +87,9 @@ export default function SignInScreen() {
   }
 
   return (
+    <SafeAreaView className="flex-1 bg-white">
     <KeyboardAvoidingView
-      className="flex-1 bg-white"
+      className="flex-1"
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <ScrollView
@@ -171,5 +173,6 @@ export default function SignInScreen() {
         </View>
       </ScrollView>
     </KeyboardAvoidingView>
+    </SafeAreaView>
   )
 }
