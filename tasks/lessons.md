@@ -60,6 +60,19 @@
   5. Then and only then move to the next sub-part
 **Applies to:** Every sprint and every multi-subsystem feature. Never plan an entire sprint in one document.
 
+## L014 — NativeWind v5 global.css must use sub-path imports, not @import "tailwindcss"
+**What happened:** `global.css` used `@import "tailwindcss"` (Tailwind v4 bare specifier). lightningcss (used internally by react-native-css) cannot deserialize this — crashes with "expected an object-like struct named Specifier". This affected BOTH apps from the very beginning but was masked by removing react-native-css in Sprint 2B.
+**Rule:** For NativeWind v5 on native, `global.css` must use explicit sub-path imports:
+  ```css
+  @import "tailwindcss/theme.css" layer(theme);
+  @import "tailwindcss/preflight.css" layer(base);
+  @import "tailwindcss/utilities.css";
+  @import "nativewind/theme.css";
+  ```
+  The `@import "tailwindcss"` shorthand only works for web/PostCSS pipelines, not native.
+**Also:** Pin `lightningcss` to `1.30.1` in root package.json `pnpm.overrides` — versions >= 1.30.2 have a regression with this CSS format.
+**Applies to:** Any Expo app using NativeWind v5 + Tailwind v4. Apply to both apps at setup time.
+
 ## L013 — Expo in pnpm monorepo requires node-linker=hoisted + metro watchFolders
 **What happened:** Metro bundler failed with "Unable to resolve react-native" from files inside nested route groups, even though other files in the same app resolved fine. Root cause: pnpm's default isolated/symlinked node_modules layout breaks Metro's module resolver for deeply nested files.
 **Rule:** Every Expo app in a pnpm monorepo requires two things:
