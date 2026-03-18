@@ -32,7 +32,7 @@
 
 ### ✅ UI Libraries
 - [x] shadcn/ui (Nova preset, Radix, Tailwind v4) — admin
-- [x] NativeWind v5 + Tailwind v4 — customer + partner
+- [x] NativeWind v4 + Tailwind v3 — customer + partner (downgraded from v5 preview due to lightningcss pnpm conflicts)
 
 ### ✅ Admin Auth
 - [x] Supabase Auth middleware (protect all /dashboard/* routes)
@@ -97,6 +97,12 @@
 - [x] `lib/auth.tsx` — AuthContext: session, loading, signOut; useAuth hook
 - [x] Login screen `app/(auth)/sign-in.tsx` — email + password form, "Sign in with Google" button, link to signup
 - [x] Signup screen `app/(auth)/sign-up.tsx` — full name, email, password, confirm password
+- [x] "Check your email" screen shown after sign-up (confirmedEmail state)
+- [x] `emailRedirectTo` points to admin app's `/auth/customer-confirmed` page (not deep link — browsers can't handle custom URL schemes)
+- [x] Email confirmation landing page `apps/admin/src/app/auth/customer-confirmed/page.tsx` — shows confirmation + deep-link button to open app
+- [x] Auto sign-out when customer row is deleted (Realtime DELETE subscription in auth.tsx)
+- [x] DB migration: Realtime enabled on customers table (`supabase_realtime` publication + `REPLICA IDENTITY DEFAULT`)
+- [x] DB migration: fix handle_new_user trigger (removed non-existent email column from INSERT)
 - [x] Google OAuth via expo-web-browser + expo-auth-session → supabase.auth.signInWithOAuth
 - [x] Session persistence on app restart (Supabase client handles via expo-secure-store)
 
