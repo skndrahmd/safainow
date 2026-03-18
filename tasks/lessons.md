@@ -60,6 +60,17 @@
   5. Then and only then move to the next sub-part
 **Applies to:** Every sprint and every multi-subsystem feature. Never plan an entire sprint in one document.
 
+## L015 — Use NativeWind v4 + Tailwind v3, not NativeWind v5 preview
+**What happened:** NativeWind v5 preview (5.0.0-preview.3) uses react-native-css + lightningcss for CSS compilation. lightningcss has version conflict issues in pnpm monorepos — multiple nested copies at different versions, overrides don't propagate correctly. Spent many sessions debugging.
+**Rule:** Use `nativewind@^4.1.23` + `tailwindcss@^3.4.0` for all Expo apps. v4 uses Babel transforms (no lightningcss, no CSS compiler). Zero version conflict issues.
+**v4 setup files:**
+  - `babel.config.js`: `presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel']`
+  - `tailwind.config.js`: content array + `presets: [require('nativewind/preset')]`
+  - `global.css`: `@tailwind base; @tailwind components; @tailwind utilities;`
+  - `metro.config.js`: `withNativewind(config, { input: './global.css' })`
+  - `nativewind-env.d.ts`: `/// <reference types="nativewind/types" />`
+**Applies to:** Any new Expo app in this monorepo. Never use NativeWind v5 preview until it has a stable release.
+
 ## L014 — NativeWind v5 global.css must use sub-path imports, not @import "tailwindcss"
 **What happened:** `global.css` used `@import "tailwindcss"` (Tailwind v4 bare specifier). lightningcss (used internally by react-native-css) cannot deserialize this — crashes with "expected an object-like struct named Specifier". This affected BOTH apps from the very beginning but was masked by removing react-native-css in Sprint 2B.
 **Rule:** For NativeWind v5 on native, `global.css` must use explicit sub-path imports:
@@ -67,7 +78,7 @@
   @import "tailwindcss/theme.css" layer(theme);
   @import "tailwindcss/preflight.css" layer(base);
   @import "tailwindcss/utilities.css";
-  @import "nativewind/theme.css";
+  @import "nativewind/theme";  ← no .css! package exports "./theme" not "./theme.css"
   ```
   The `@import "tailwindcss"` shorthand only works for web/PostCSS pipelines, not native.
 **Also:** Pin `lightningcss` to `1.30.1` in root package.json `pnpm.overrides` — versions >= 1.30.2 have a regression with this CSS format.
