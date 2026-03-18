@@ -105,6 +105,7 @@ export default function HomeScreen() {
           description={item.description_en}
           price={item.price}
           type={item.type}
+          inCart={selectedPackages.some((p) => p.id === item.id)}
           onViewDetail={() => handleViewDetail(item)}
           onQuickAdd={() => handleQuickAdd(item)}
         />

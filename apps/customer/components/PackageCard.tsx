@@ -9,6 +9,7 @@ interface PackageCardProps {
   description: string
   price: number
   type: PackageType
+  inCart: boolean
   onViewDetail: () => void  // eye icon (pre-built) or chevron (custom) → detail/builder page
   onQuickAdd: () => void    // + button → add to cart (pre-built only)
 }
@@ -24,13 +25,18 @@ export default function PackageCard({
   description,
   price,
   type,
+  inCart,
   onViewDetail,
   onQuickAdd,
 }: PackageCardProps) {
   const badge = TYPE_BADGE[type]
 
   return (
-    <View className="mb-3 rounded-2xl border border-gray-100 bg-white p-5 shadow-sm">
+    <View
+      className={`mb-3 rounded-2xl border p-5 shadow-sm ${
+        inCart ? 'border-green-200 bg-green-50' : 'border-gray-100 bg-white'
+      }`}
+    >
       {/* Badge + detail icon row */}
       <View className="mb-3 flex-row items-center justify-between">
         <View className={`rounded-full px-3 py-1 ${badge.className}`}>
@@ -57,18 +63,23 @@ export default function PackageCard({
         {description}
       </Text>
 
-      {/* Price row — price left, + button right (hidden for custom) */}
+      {/* Price row — price left, + button or checkmark right */}
       <View className="flex-row items-center justify-between">
         <Text className="text-base font-semibold text-gray-900">Rs {price.toLocaleString()}</Text>
-        {type !== 'custom' && (
-          <TouchableOpacity
-            onPress={onQuickAdd}
-            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
-            className="h-9 w-9 items-center justify-center rounded-full bg-gray-900"
-          >
-            <Ionicons name="add" size={20} color="#ffffff" />
-          </TouchableOpacity>
-        )}
+        {type !== 'custom' &&
+          (inCart ? (
+            <View className="h-9 w-9 items-center justify-center rounded-full bg-green-600">
+              <Ionicons name="checkmark" size={20} color="#ffffff" />
+            </View>
+          ) : (
+            <TouchableOpacity
+              onPress={onQuickAdd}
+              hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+              className="h-9 w-9 items-center justify-center rounded-full bg-gray-900"
+            >
+              <Ionicons name="add" size={20} color="#ffffff" />
+            </TouchableOpacity>
+          ))}
       </View>
     </View>
   )
