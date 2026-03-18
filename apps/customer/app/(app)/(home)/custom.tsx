@@ -5,32 +5,35 @@ import {
   FlatList,
   ActivityIndicator,
   TouchableOpacity,
-  Alert,
 } from 'react-native'
-import { Stack } from 'expo-router'
+import { Stack, useRouter } from 'expo-router'
 import { supabase } from '@/lib/supabase'
+import { useBookingFlow } from '@/context/booking-flow'
 import ServiceItem from '@/components/ServiceItem'
 import type { Tables } from '@safainow/types'
 
 type Service = Tables<'services'>
 
 export default function CustomPackageScreen() {
+  const router = useRouter()
+  const { setSelectedPackages, setCustomServices } = useBookingFlow()
   const [services, setServices] = useState<Service[]>([])
+  const [customPackage, setCustomPackage] = useState<{ id: string; name_en: string } | null>(null)
   const [selected, setSelected] = useState<Set<string>>(new Set())
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
 
   const fetchServices = useCallback(async () => {
-    const { data, error } = await supabase
-      .from('services')
-      .select('*')
-      .eq('is_active', true)
-      .order('name_en', { ascending: true })
+    const [servicesRes, pkgRes] = await Promise.all([
+      supabase.from('services').select('*').eq('is_active', true).order('name_en', { ascending: true }),
+      supabase.from('packages').select('id, name_en').eq('type', 'custom').eq('is_active', true).single(),
+    ])
 
-    if (error) {
+    if (servicesRes.error) {
       setError('Could not load services. Please try again.')
     } else {
-      setServices(data ?? [])
+      setServices(servicesRes.data ?? [])
+      setCustomPackage(pkgRes.data ?? null)
       setError(null)
     }
     setLoading(false)
@@ -137,9 +140,21 @@ export default function CustomPackageScreen() {
             selected.size === 0 ? 'bg-gray-200' : 'bg-gray-900'
           }`}
           disabled={selected.size === 0}
-          onPress={() =>
-            Alert.alert('Coming Soon', 'Booking flow will be available in the next update.')
-          }
+          onPress={() => {
+            const selectedServices = services.filter((s) => selected.has(s.id))
+            setSelectedPackages([
+              {
+                id: customPackage?.id ?? 'custom',
+                name: customPackage?.name_en ?? 'Custom Package',
+                price: 0,
+                type: 'custom',
+              },
+            ])
+            setCustomServices(
+              selectedServices.map((s) => ({ id: s.id, name: s.name_en, price: s.price })),
+            )
+            router.push('/booking/address')
+          }}
         >
           <Text
             className={`text-base font-semibold ${

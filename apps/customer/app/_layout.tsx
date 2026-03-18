@@ -1,6 +1,7 @@
 import '../global.css'
 import { Stack } from 'expo-router'
 import { AuthProvider, useAuth } from '@/lib/auth'
+import { BookingFlowProvider } from '@/context/booking-flow'
 
 function RootLayoutNav() {
   const { session, isLoading } = useAuth()
@@ -32,7 +33,9 @@ function RootLayoutNav() {
 export default function RootLayout() {
   return (
     <AuthProvider>
-      <RootLayoutNav />
+      <BookingFlowProvider>
+        <RootLayoutNav />
+      </BookingFlowProvider>
     </AuthProvider>
   )
 }

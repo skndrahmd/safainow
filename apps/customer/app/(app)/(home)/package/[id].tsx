@@ -5,11 +5,11 @@ import {
   ScrollView,
   ActivityIndicator,
   TouchableOpacity,
-  Alert,
 } from 'react-native'
 import { Stack, useLocalSearchParams, useRouter } from 'expo-router'
 import { Ionicons } from '@expo/vector-icons'
 import { supabase } from '@/lib/supabase'
+import { useBookingFlow } from '@/context/booking-flow'
 import type { Tables } from '@safainow/types'
 
 type Service = Tables<'services'>
@@ -21,6 +21,7 @@ type PackageWithServices = Tables<'packages'> & {
 export default function PackageDetailScreen() {
   const { id } = useLocalSearchParams<{ id: string }>()
   const router = useRouter()
+  const { addPackage } = useBookingFlow()
   const [pkg, setPkg] = useState<PackageWithServices | null>(null)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState<string | null>(null)
@@ -129,9 +130,10 @@ export default function PackageDetailScreen() {
         </View>
         <TouchableOpacity
           className="items-center rounded-2xl bg-gray-900 py-4"
-          onPress={() =>
-            Alert.alert('Coming Soon', 'Booking flow will be available in the next update.')
-          }
+          onPress={() => {
+            addPackage({ id: pkg.id, name: pkg.name_en, price: pkg.price, type: pkg.type })
+            router.push('/booking/address')
+          }}
         >
           <Text className="text-base font-semibold text-white">Book This Package</Text>
         </TouchableOpacity>

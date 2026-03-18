@@ -31,6 +31,8 @@ type BookingFlowState = {
 type BookingFlowContextValue = BookingFlowState & {
   setSelectedPackages: (pkgs: PackageSnapshot[]) => void
   setCustomServices: (services: ServiceSnapshot[]) => void
+  /** Add a package applying combination rules (safe to call from anywhere outside the flow) */
+  addPackage: (pkg: PackageSnapshot) => void
   setAddress: (params: {
     text: string
     latitude: number
@@ -65,6 +67,26 @@ export function BookingFlowProvider({ children }: { children: ReactNode }) {
 
   const setSelectedPackages = (pkgs: PackageSnapshot[]) =>
     setState((prev) => ({ ...prev, selectedPackages: pkgs }))
+
+  /** Apply combination rules and add/toggle a package */
+  const addPackage = (pkg: PackageSnapshot) =>
+    setState((prev) => {
+      if (pkg.type === 'custom') {
+        return { ...prev, selectedPackages: [pkg], customServices: [] }
+      }
+      if (pkg.type === 'cleaning') {
+        const next = prev.selectedPackages
+          .filter((p) => p.type !== 'cleaning' && p.type !== 'custom')
+          .concat(pkg)
+        return { ...prev, selectedPackages: next }
+      }
+      if (pkg.type === 'standalone') {
+        const withoutCustom = prev.selectedPackages.filter((p) => p.type !== 'custom')
+        if (withoutCustom.some((p) => p.id === pkg.id)) return prev
+        return { ...prev, selectedPackages: [...withoutCustom, pkg] }
+      }
+      return prev
+    })
 
   const setCustomServices = (services: ServiceSnapshot[]) =>
     setState((prev) => ({ ...prev, customServices: services }))
@@ -103,6 +125,7 @@ export function BookingFlowProvider({ children }: { children: ReactNode }) {
         totalPrice,
         setSelectedPackages,
         setCustomServices,
+        addPackage,
         setAddress,
         setBookingType,
         setScheduledAt,

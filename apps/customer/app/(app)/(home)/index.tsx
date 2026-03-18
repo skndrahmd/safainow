@@ -10,6 +10,7 @@ import {
 import { useRouter } from 'expo-router'
 import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
+import { useBookingFlow } from '@/context/booking-flow'
 import PackageCard from '@/components/PackageCard'
 import type { Tables } from '@safainow/types'
 
@@ -18,6 +19,7 @@ type Package = Tables<'packages'>
 export default function HomeScreen() {
   const router = useRouter()
   const { session } = useAuth()
+  const { addPackage } = useBookingFlow()
   const [packages, setPackages] = useState<Package[]>([])
   const [loading, setLoading] = useState(true)
   const [refreshing, setRefreshing] = useState(false)
@@ -50,9 +52,15 @@ export default function HomeScreen() {
     setRefreshing(false)
   }, [fetchPackages])
 
-  // Tapping the card body or + button → opens booking flow
+  // Tapping the card body → Step 1 (package selection) for browsing
   const handlePackagePress = (_pkg: Package) => {
     router.push('/booking')
+  }
+
+  // Tapping the + button → quick-add that package, skip straight to address step
+  const handleQuickAdd = (pkg: Package) => {
+    addPackage({ id: pkg.id, name: pkg.name_en, price: pkg.price, type: pkg.type })
+    router.push('/booking/address')
   }
 
   // Tapping the eye icon → detail page
@@ -102,7 +110,7 @@ export default function HomeScreen() {
           type={item.type}
           onPress={() => handlePackagePress(item)}
           onViewDetail={() => handleViewDetail(item)}
-          onQuickAdd={() => handlePackagePress(item)}
+          onQuickAdd={() => handleQuickAdd(item)}
         />
       )}
       contentContainerClassName="px-5 pt-6 pb-10"
