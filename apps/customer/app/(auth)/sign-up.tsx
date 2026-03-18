@@ -11,6 +11,7 @@ import {
   ScrollView,
 } from 'react-native'
 import { Link } from 'expo-router'
+import * as Linking from 'expo-linking'
 import { supabase } from '@/lib/supabase'
 
 export default function SignUpScreen() {
@@ -19,6 +20,7 @@ export default function SignUpScreen() {
   const [password, setPassword] = useState('')
   const [confirmPassword, setConfirmPassword] = useState('')
   const [loading, setLoading] = useState(false)
+  const [confirmedEmail, setConfirmedEmail] = useState('')
 
   async function handleSignUp() {
     if (!fullName.trim()) {
@@ -44,6 +46,10 @@ export default function SignUpScreen() {
       password,
       options: {
         data: { full_name: fullName.trim() },
+        // Deep-link back into this app after email confirmation.
+        // Prevents Supabase from falling back to the project's Site URL
+        // (which is the admin dashboard).
+        emailRedirectTo: Linking.createURL('/'),
       },
     })
     setLoading(false)
@@ -53,11 +59,39 @@ export default function SignUpScreen() {
       return
     }
 
-    // Supabase triggers the customer auto-creation trigger (Sprint 2A).
-    // onAuthStateChange fires → AuthProvider updates session →
-    // Stack.Protected redirects to (app) automatically.
+    // Show the "check your email" screen
+    setConfirmedEmail(email.trim())
   }
 
+  // ── Success state ──────────────────────────────────────────────────
+  if (confirmedEmail) {
+    return (
+      <View className="flex-1 items-center justify-center bg-white px-6">
+        <View className="mb-6 h-20 w-20 items-center justify-center rounded-full bg-gray-100">
+          <Text className="text-4xl">📧</Text>
+        </View>
+        <Text className="mb-3 text-center text-2xl font-bold text-gray-900">
+          Check your email
+        </Text>
+        <Text className="mb-2 text-center text-base text-gray-500">
+          We sent a confirmation link to:
+        </Text>
+        <Text className="mb-8 text-center text-base font-semibold text-gray-900">
+          {confirmedEmail}
+        </Text>
+        <Text className="mb-10 text-center text-sm text-gray-400">
+          Tap the link in the email to activate your account, then come back and sign in.
+        </Text>
+        <Link href="/(auth)/sign-in" asChild>
+          <TouchableOpacity className="w-full items-center rounded-xl bg-gray-900 py-4">
+            <Text className="text-base font-semibold text-white">Go to Sign In</Text>
+          </TouchableOpacity>
+        </Link>
+      </View>
+    )
+  }
+
+  // ── Sign-up form ───────────────────────────────────────────────────
   return (
     <KeyboardAvoidingView
       className="flex-1 bg-white"

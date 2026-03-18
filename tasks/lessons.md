@@ -67,7 +67,7 @@
   - `babel.config.js`: `presets: [['babel-preset-expo', { jsxImportSource: 'nativewind' }], 'nativewind/babel']`
   - `tailwind.config.js`: content array + `presets: [require('nativewind/preset')]`
   - `global.css`: `@tailwind base; @tailwind components; @tailwind utilities;`
-  - `metro.config.js`: `withNativewind(config, { input: './global.css' })`
+  - `metro.config.js`: `withNativeWind(config, { input: './global.css' })` ← capital W in Wind
   - `nativewind-env.d.ts`: `/// <reference types="nativewind/types" />`
 **Applies to:** Any new Expo app in this monorepo. Never use NativeWind v5 preview until it has a stable release.
 
