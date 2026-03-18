@@ -51,7 +51,7 @@ export default function HomeScreen() {
     setRefreshing(false)
   }, [fetchPackages])
 
-  // Tapping the card body → booking flow (Coming Soon until Sprint 2D)
+  // Tapping the card body or + button → booking flow (Coming Soon until Sprint 2D)
   const handlePackagePress = (_pkg: Package) => {
     Alert.alert('Coming Soon', 'Booking flow will be available in the next update.')
   }
@@ -103,6 +103,7 @@ export default function HomeScreen() {
           type={item.type}
           onPress={() => handlePackagePress(item)}
           onViewDetail={() => handleViewDetail(item)}
+          onQuickAdd={() => handlePackagePress(item)}
         />
       )}
       contentContainerClassName="px-5 pt-6 pb-10"

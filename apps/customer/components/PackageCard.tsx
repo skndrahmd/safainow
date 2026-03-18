@@ -11,6 +11,7 @@ interface PackageCardProps {
   type: PackageType
   onPress: () => void       // tap card body → booking flow (Sprint 2D)
   onViewDetail: () => void  // tap eye icon → package detail page
+  onQuickAdd: () => void    // tap + button → quick-add to booking (Sprint 2D)
 }
 
 const TYPE_BADGE: Record<PackageType, { label: string; className: string }> = {
@@ -26,6 +27,7 @@ export default function PackageCard({
   type,
   onPress,
   onViewDetail,
+  onQuickAdd,
 }: PackageCardProps) {
   const badge = TYPE_BADGE[type]
 
@@ -61,8 +63,22 @@ export default function PackageCard({
         {description}
       </Text>
 
-      {/* Price */}
-      <Text className="text-base font-semibold text-gray-900">Rs {price.toLocaleString()}</Text>
+      {/* Price row — price left, + button right (hidden for custom) */}
+      <View className="flex-row items-center justify-between">
+        <Text className="text-base font-semibold text-gray-900">Rs {price.toLocaleString()}</Text>
+        {type !== 'custom' && (
+          <TouchableOpacity
+            onPress={(e) => {
+              e.stopPropagation()
+              onQuickAdd()
+            }}
+            hitSlop={{ top: 8, bottom: 8, left: 8, right: 8 }}
+            className="h-9 w-9 items-center justify-center rounded-full bg-gray-900"
+          >
+            <Ionicons name="add" size={20} color="#ffffff" />
+          </TouchableOpacity>
+        )}
+      </View>
     </TouchableOpacity>
   )
 }
