@@ -35,6 +35,29 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     return () => subscription.unsubscribe()
   }, [])
 
+  // Sign out automatically if the customer's DB row is deleted (e.g. admin removes them)
+  useEffect(() => {
+    if (!session?.user.id) return
+
+    const channel = supabase
+      .channel('customer-row-watch')
+      .on(
+        'postgres_changes',
+        {
+          event: 'DELETE',
+          schema: 'public',
+          table: 'customers',
+          filter: `id=eq.${session.user.id}`,
+        },
+        () => supabase.auth.signOut()
+      )
+      .subscribe()
+
+    return () => {
+      supabase.removeChannel(channel)
+    }
+  }, [session?.user.id])
+
   return (
     <AuthContext.Provider value={{ session, isLoading }}>
       {children}
