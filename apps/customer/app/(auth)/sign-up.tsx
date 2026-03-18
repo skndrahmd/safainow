@@ -11,8 +11,9 @@ import {
   ScrollView,
 } from 'react-native'
 import { Link } from 'expo-router'
-import * as Linking from 'expo-linking'
 import { supabase } from '@/lib/supabase'
+
+const ADMIN_URL = process.env.EXPO_PUBLIC_ADMIN_URL ?? 'http://localhost:3000'
 
 export default function SignUpScreen() {
   const [fullName, setFullName] = useState('')
@@ -49,7 +50,7 @@ export default function SignUpScreen() {
         // Deep-link back into this app after email confirmation.
         // Prevents Supabase from falling back to the project's Site URL
         // (which is the admin dashboard).
-        emailRedirectTo: Linking.createURL('/'),
+        emailRedirectTo: `${ADMIN_URL}/auth/customer-confirmed`,
       },
     })
     setLoading(false)
