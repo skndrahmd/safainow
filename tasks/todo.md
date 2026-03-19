@@ -165,23 +165,28 @@
 - [x] Booking detail `app/(app)/bookings/[id].tsx` — packages, custom services, total, address, schedule, timeline timestamps
 - [x] Re-book button on completed/cancelled bookings — pre-fills booking flow context with same packages, navigates to address
 
-### 🔲 Customer App — Address Book
-- [ ] Address book screen `app/(app)/profile/addresses.tsx` — list saved addresses with default badge
-- [ ] Add address form (accessible from address book and from booking flow step 2)
-- [ ] Edit address (address text, label)
-- [ ] Delete address (with confirmation)
-- [ ] Set as default toggle
+### ✅ Customer App — Address Book
+- [x] Address book screen `app/(app)/profile/addresses.tsx` — list saved addresses with default badge
+- [x] Add address form (accessible from address book and from booking flow step 2)
+- [x] Edit address (address text, label)
+- [x] Delete address (with confirmation)
+- [x] Set as default toggle (star icon with loading spinner)
+- [x] Booking flow address step: saved address picker (horizontal chips pre-fill text, GPS, label)
+- [x] Custom label input when "Other" label is selected (add-address, edit-address, booking flow)
+- [x] "Save this address" toggle in booking flow for new addresses
 
-### 🔲 Customer App — Profile & Settings
-- [ ] Profile screen `app/(app)/profile/index.tsx`:
-  - [ ] Show name, email, phone, profile picture
-  - [ ] Link to: Edit Profile, Address Book, Change Password, Notification Settings, Delete Account
-- [ ] Edit profile `app/(app)/profile/edit.tsx` — change display name, phone, profile picture (image picker + upload to Supabase Storage)
-- [ ] Change email `app/(app)/profile/change-email.tsx` — supabase.auth.updateUser({ email })
-- [ ] Change / set password `app/(app)/profile/change-password.tsx` — for email users: old + new; for Google-only users: set new password (dual login)
-- [ ] Push notification toggle (store preference; actual FCM wiring in Sprint 3)
-- [ ] Log out — supabase.auth.signOut → redirect to login
-- [ ] Delete account — confirmation dialog → delete customer row + supabase.auth.admin.deleteUser (via API)
+### ✅ Customer App — Profile & Settings
+- [x] Profile screen `app/(app)/profile/index.tsx`:
+  - [x] Show name, email, phone, profile picture
+  - [x] Link to: Edit Profile, Address Book, Change Password, Delete Account
+- [x] Edit profile `app/(app)/profile/edit.tsx` — change display name, phone, profile picture (image picker + upload to Supabase Storage `customer-avatars` bucket)
+- [x] DB migration: `profile_picture_url` column on customers + `customer-avatars` storage bucket + policies
+- [x] Change / set password `app/(app)/profile/change-password.tsx` — new + confirm, min 6 chars, `supabase.auth.updateUser({ password })`
+- [x] Log out — supabase.auth.signOut → redirect to login
+- [x] Delete account `app/(app)/profile/delete-account.tsx` — type "DELETE" to confirm → `DELETE /customers/me` API → sign out
+- [x] API: `DELETE /customers/me` `apps/api/src/routes/customers/index.ts` — delete customer row + auth user via admin client
+- [ ] Change email `app/(app)/profile/change-email.tsx` — deferred (requires email re-confirmation flow)
+- [ ] Push notification toggle — deferred to Sprint 3 (FCM not wired yet)
 
 ### ✅ API — Booking Creation
 - [x] Fastify auth plugin `apps/api/src/plugins/auth.ts` — verify Supabase JWT via JWKS endpoint (asymmetric keys, no static secret needed)

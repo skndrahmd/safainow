@@ -191,3 +191,43 @@
 **What happened:** Booking detail page used `Stack.Screen options={{ headerShown: true }}` inside a Stack whose parent `_layout.tsx` had `headerShown: false`. The header rendered but was behind the notch/status bar.
 **Rule:** When a screen is inside a nested navigator (e.g. Stack inside Tabs), don't rely on `Stack.Screen headerShown: true` for safe area handling. Instead, use `useSafeAreaInsets()` hook with manual `paddingTop: insets.top + N` and build a custom header row with a back button.
 **Applies to:** Any detail/sub-screen inside a tab that uses a nested Stack with `headerShown: false`.
+
+## L031 — Use useFocusEffect for lists that need to refresh on navigate-back
+**What happened:** Address list used `useEffect` to fetch addresses on mount. After adding a new address and navigating back, the list showed stale data because the component was already mounted and the effect didn't re-run.
+**Rule:** For any list screen where the user can navigate away to add/edit/delete an item and then come back, use `useFocusEffect` from `expo-router` (or `@react-navigation/native`) instead of `useEffect`. This re-fetches data every time the screen regains focus.
+**Applies to:** Any list screen in a Stack navigator where child screens modify the underlying data.
+
+## L032 — Address input should be text OR GPS, not both required
+**What happened:** Add address form required both a typed address (≥5 chars) AND GPS coordinates to save. Users should be able to save with just one.
+**Rule:** When a form has multiple ways to provide the same logical input (e.g. typed address vs GPS pin), use OR validation (`canSave = hasText || hasCoords`), not AND. Fill in sensible defaults for the missing field (e.g. "GPS Location (lat, lng)" for missing text, 0/0 for missing coords).
+**Applies to:** Any form with alternative input methods for the same field.
+
+## L033 — Async toggle actions need loading state and duplicate-call prevention
+**What happened:** Set-as-default toggle on address rows had no loading indicator. Users would tap multiple times during the delay, causing unnecessary API calls.
+**Rule:** For any toggle/action button that triggers an async operation: (1) show a loading spinner replacing the icon, (2) disable the button while loading, (3) early-return in the handler if already processing. Track the in-progress item's ID in state (e.g. `togglingId`) rather than a boolean, so only the specific item shows the spinner.
+**Applies to:** Any list item with inline async actions (toggle, delete, etc.).
+
+## L034 — Create all route files before type-checking in Expo Router typed routes
+**What happened:** Created `_layout.tsx` and `index.tsx` for the profile stack but hadn't created `addresses.tsx` yet. Type check failed because `router.push('/profile/addresses')` referenced a route that didn't exist as a file — Expo Router generates typed routes from the file system.
+**Rule:** When adding navigation between new screens, create all the target screen files (even as stubs) before running `tsc --noEmit`. Expo Router's typed routes won't recognize a path until the corresponding file exists.
+**Applies to:** Any new screen that is navigated to via `router.push()` or `router.replace()`.
+
+## L035 — Offer "save to address book" when entering new addresses in flows
+**What happened:** Booking flow address step collected address data but never offered to persist it. Users had to go to profile > address book separately to save addresses they'd already typed.
+**Rule:** When a flow collects data that could be reused (addresses, payment methods, etc.), offer an inline "save for later" toggle. Use fire-and-forget insert so it doesn't block the primary flow. Hide the toggle when the user selects an already-saved item.
+**Applies to:** Any flow that collects reusable user data.
+
+## L036 — Supabase Storage upload from React Native requires base64-arraybuffer
+**What happened:** React Native's Blob/File/FormData don't work reliably for Supabase Storage uploads. Using `expo-image-picker` with `base64: true` + `base64-arraybuffer` decode is the reliable pattern.
+**Rule:** For Supabase Storage uploads in React Native, always use: (1) `expo-image-picker` with `base64: true`, (2) `decode(asset.base64)` from `base64-arraybuffer`, (3) set `contentType` explicitly, (4) use `upsert: true` for overwritable uploads like avatars. Append `?t=${Date.now()}` cache-buster to the public URL so updated images display immediately.
+**Applies to:** Any Supabase Storage upload from React Native.
+
+## L037 — Supabase auth.updateUser does not require old password
+**What happened:** Planned to add "old password" field for password change, but Supabase's `auth.updateUser({ password })` works with just the new password when there's an active session.
+**Rule:** When building password change screens for Supabase Auth, only collect the new password (+ confirm). No old password needed. This also means Google-only users can set a password for dual login without needing to know an old one.
+**Applies to:** Any Supabase Auth password change/set flow.
+
+## L038 — TypeScript `as const` arrays with optional properties need explicit typing
+**What happened:** Used `as const` on an array of menu items where only one item had a `danger` property. TS narrowed each item to its literal type, so `.danger` didn't exist on items without it, causing type errors.
+**Rule:** When an array of objects has optional properties that only some items have, either: (1) add the property with `false`/`undefined` to all items, or (2) use an explicit type annotation instead of `as const` (e.g. `readonly { label: string; icon: string; danger?: boolean }[]`).
+**Applies to:** Any `as const` array where items have heterogeneous shapes.
