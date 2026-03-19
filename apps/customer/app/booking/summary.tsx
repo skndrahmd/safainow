@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useBookingFlow } from '@/context/booking-flow'
 import { useAuth } from '@/lib/auth'
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.100.79:3001'
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.100.54:3001'
 
 export default function SummaryScreen() {
   const router = useRouter()

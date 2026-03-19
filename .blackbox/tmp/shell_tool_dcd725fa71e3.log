@@ -1,0 +1,76 @@
+
+> api@1.0.0 dev:start /Users/sikanderahmed/Documents/dev_projects/safainow/apps/api
+> fastify start --ignore-watch=.ts$ -w -l info -P -a 0.0.0.0 dist/app.js
+
+[00:55:44.050] INFO (30205): Server listening at http://127.0.0.1:3001
+[00:55:44.050] INFO (30205): Server listening at http://192.168.100.54:3001
+[00:55:55.775] INFO (30205): incoming request
+    reqId: "req-1"
+    req: {
+      "method": "GET",
+      "url": "/",
+      "host": "localhost:3001",
+      "remoteAddress": "127.0.0.1",
+      "remotePort": 57340
+    }
+[00:55:55.779] INFO (30205): request completed
+    reqId: "req-1"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 3.564166009426117
+[00:56:01.055] INFO (30253): Server listening at http://127.0.0.1:3001
+[00:56:01.055] INFO (30253): Server listening at http://192.168.100.54:3001
+[00:57:15.987] INFO (30464): Server listening at http://127.0.0.1:3001
+[00:57:15.988] INFO (30464): Server listening at http://192.168.100.54:3001
+[00:57:17.758] INFO (30581): Server listening at http://127.0.0.1:3001
+[00:57:17.758] INFO (30581): Server listening at http://192.168.100.54:3001
+[00:57:39.668] INFO (30608): Server listening at http://127.0.0.1:3001
+[00:57:39.668] INFO (30608): Server listening at http://192.168.100.54:3001
+[00:57:39.875] INFO (30613): Server listening at http://127.0.0.1:3001
+[00:57:39.875] INFO (30613): Server listening at http://192.168.100.54:3001
+[00:59:52.879] INFO (30613): incoming request
+    reqId: "req-1"
+    req: {
+      "method": "GET",
+      "url": "/",
+      "host": "192.168.100.54:3001",
+      "remoteAddress": "192.168.100.54",
+      "remotePort": 57717
+    }
+[00:59:52.912] INFO (30613): request completed
+    reqId: "req-1"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 32.15716701745987
+[01:01:32.838] INFO (30613): incoming request
+    reqId: "req-2"
+    req: {
+      "method": "POST",
+      "url": "/bookings",
+      "host": "192.168.100.54:3001",
+      "remoteAddress": "192.168.100.54",
+      "remotePort": 58080
+    }
+[01:01:35.175] INFO (30613): request completed
+    reqId: "req-2"
+    res: {
+      "statusCode": 201
+    }
+    responseTime: 2336.8019160032272
+[01:01:41.644] INFO (30613): incoming request
+    reqId: "req-3"
+    req: {
+      "method": "DELETE",
+      "url": "/bookings/dc885232-d17d-4daf-913c-a8a1cb59ce57/cancel",
+      "host": "192.168.100.54:3001",
+      "remoteAddress": "192.168.100.54",
+      "remotePort": 58080
+    }
+[01:01:43.009] INFO (30613): request completed
+    reqId: "req-3"
+    res: {
+      "statusCode": 200
+    }
+    responseTime: 1365.3107080459595

@@ -6,7 +6,7 @@ import { supabase } from '@/lib/supabase'
 import { useAuth } from '@/lib/auth'
 import { BOOKING_STATUS } from '@safainow/constants'
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.100.79:3001'
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.100.54:3001'
 
 export default function MatchingScreen() {
   const router = useRouter()
