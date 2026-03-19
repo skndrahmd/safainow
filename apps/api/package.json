@@ -12,19 +12,23 @@
     "build:ts": "tsc",
     "watch:ts": "tsc -w",
     "dev": "npm run build:ts && concurrently -k -p \"[{name}]\" -n \"TypeScript,App\" -c \"yellow.bold,cyan.bold\" \"npm:watch:ts\" \"npm:dev:start\"",
-    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P dist/app.js"
+    "dev:start": "fastify start --ignore-watch=.ts$ -w -l info -P -a 0.0.0.0 dist/app.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "dependencies": {
     "@fastify/autoload": "^6.0.0",
+    "@fastify/jwt": "^10.0.0",
     "@fastify/sensible": "^6.0.0",
+    "@safainow/constants": "workspace:^",
     "@safainow/types": "workspace:^",
+    "@safainow/validators": "workspace:^",
     "@supabase/supabase-js": "^2.99.2",
     "fastify": "^5.0.0",
     "fastify-cli": "^7.4.1",
-    "fastify-plugin": "^5.0.0"
+    "fastify-plugin": "^5.0.0",
+    "get-jwks": "^11.0.3"
   },
   "devDependencies": {
     "@types/node": "^24.0.8",

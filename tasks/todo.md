@@ -147,21 +147,23 @@
 - [x] Safe area handling: `SafeAreaProvider` at root, `useSafeAreaInsets()` on home screen, `SafeAreaView` on auth screens
 - [x] Android DateTimePicker fix: split `mode="datetime"` into separate date → time pickers (fixes "dismiss of undefined" crash)
 
-### 🔲 Customer App — Post-Booking
-- [ ] Post-booking / matching status screen `app/booking/matching.tsx`:
-  - [ ] "Finding a partner…" spinner while status = pending
-  - [ ] "Cancel" button (free cancellation before acceptance)
-  - [ ] Poll or Supabase Realtime subscription on booking status
-  - [ ] Once accepted: navigate to active booking screen (Sprint 3)
+### ✅ Customer App — Post-Booking
+- [x] Post-booking / matching status screen `app/booking/matching.tsx`:
+  - [x] "Finding a partner…" spinner while status = pending
+  - [x] "Cancel" button (free cancellation before acceptance)
+  - [x] Supabase Realtime subscription on booking status changes
+  - [x] Once accepted: alert + navigate to home (active booking screen is Sprint 3)
 - [ ] Active booking screen `app/(app)/bookings/active/[id].tsx` (stub for Sprint 2, full in Sprint 3):
   - [ ] Show booking status badge
   - [ ] Show partner info (once accepted): name, phone (tap-to-call), photo
   - [ ] Cancel button visible for 15 min after acceptance (Sprint 3)
 
-### 🔲 Customer App — Booking History
-- [ ] Booking history list `app/(app)/bookings/index.tsx` — list all bookings (status badge, date, packages, price)
-- [ ] Booking detail `app/(app)/bookings/[id].tsx` — full detail: packages, services, address, partner, status, timestamps
-- [ ] Re-book button on completed bookings (pre-fills booking flow with same packages)
+### ✅ Customer App — Booking History
+- [x] Booking history list `app/(app)/bookings/index.tsx` — FlatList with status badges, date, packages, price, pull-to-refresh, empty state
+- [x] `components/BookingCard.tsx` — reusable card with colored status badge, package names, total, date
+- [x] Bookings stack layout `app/(app)/bookings/_layout.tsx` — Stack for list → detail navigation
+- [x] Booking detail `app/(app)/bookings/[id].tsx` — packages, custom services, total, address, schedule, timeline timestamps
+- [x] Re-book button on completed/cancelled bookings — pre-fills booking flow context with same packages, navigates to address
 
 ### 🔲 Customer App — Address Book
 - [ ] Address book screen `app/(app)/profile/addresses.tsx` — list saved addresses with default badge
@@ -181,20 +183,21 @@
 - [ ] Log out — supabase.auth.signOut → redirect to login
 - [ ] Delete account — confirmation dialog → delete customer row + supabase.auth.admin.deleteUser (via API)
 
-### 🔲 API — Booking Creation
-- [ ] Fastify auth plugin `apps/api/src/plugins/auth.ts` — verify Supabase JWT from Authorization header, attach customer to request
-- [ ] `POST /bookings` `apps/api/src/routes/bookings/index.ts`:
-  - [ ] Validate body with BookingCreateSchema (Zod)
-  - [ ] Validate package combination rules (server-side)
-  - [ ] Fetch packages + services, check all are active
-  - [ ] Calculate total_price (sum of package prices + custom service prices)
-  - [ ] Insert booking row (status: pending, address snapshot, total_price)
-  - [ ] Insert booking_packages rows (price_at_booking snapshot)
-  - [ ] Insert booking_custom_services rows if custom package (price_at_booking snapshot)
-  - [ ] Insert booking_timeline row (status: pending, actor_type: customer)
-  - [ ] Insert commission_ledger row (status: owed, amounts calculated at 75/25 split)
-  - [ ] Return { booking_id }
-- [ ] `DELETE /bookings/:id/cancel` — cancel before acceptance (only if status = pending, actor = customer)
+### ✅ API — Booking Creation
+- [x] Fastify auth plugin `apps/api/src/plugins/auth.ts` — verify Supabase JWT via JWKS endpoint (asymmetric keys, no static secret needed)
+- [x] `POST /bookings` `apps/api/src/routes/bookings/index.ts`:
+  - [x] Validate body with BookingCreateSchema (Zod)
+  - [x] Validate package combination rules (server-side)
+  - [x] Fetch packages + services, check all are active
+  - [x] Calculate total_price (sum of package prices + custom service prices)
+  - [x] Insert booking row (status: pending, address snapshot, total_price)
+  - [x] Insert booking_packages rows (price_at_booking snapshot)
+  - [x] Insert booking_custom_services rows if custom package (price_at_booking snapshot)
+  - [x] Insert booking_timeline row (status: pending, actor_type: customer)
+  - [x] Commission ledger deferred to partner acceptance (requires partner_id)
+  - [x] Return { booking, packages, custom_services }
+- [x] `DELETE /bookings/:id/cancel` — cancel before acceptance (only if status = pending, actor = customer)
+- [x] Dependencies: `@fastify/jwt` + `get-jwks` (ES256 JWKS), `@safainow/validators`, `@safainow/constants`
 
 ---
 

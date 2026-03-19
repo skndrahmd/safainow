@@ -157,3 +157,37 @@
   6. Verify before marking done
   7. Update tasks/lessons.md after corrections
 **Applies to:** Every single task, no exceptions.
+
+## L025 — Supabase uses ES256 asymmetric JWT signing keys (JWKS), not HS256
+**What happened:** Initially tried `@fastify/jwt` with a static `SUPABASE_JWT_SECRET` (HS256). Then tried `fastify-jwt-jwks` — but it hardcodes RS256, and our Supabase project uses ES256 (Elliptic Curve P-256). Got "Invalid public key provided for algorithms RS256" error.
+**Rule:** New Supabase projects (post Nov 2025) use ES256 asymmetric keys. The JWKS endpoint is `{SUPABASE_URL}/auth/v1/.well-known/jwks.json`. For Fastify, use `@fastify/jwt` + `get-jwks` (NOT `fastify-jwt-jwks` which only supports RS256). The `get-jwks` library reads the `alg` from the token header and fetches the correct public key format.
+**Setup:**
+  - `@fastify/jwt` with `decode: { complete: true }` and a `secret` callback
+  - `get-jwks` with `issuersWhitelist: ['{SUPABASE_URL}/auth/v1']`
+  - The callback extracts `kid`, `alg`, `iss` from the token and calls `getJwks.getPublicKey({ kid, domain: iss, alg })`
+**Applies to:** Any server-side JWT verification against Supabase Auth.
+
+## L026 — Commission ledger cannot be created at booking time
+**What happened:** The original plan called for inserting a `commission_ledger` row at booking creation. But the `commission_ledger` table requires `partner_id` (non-nullable FK), and no partner exists at booking creation time (status = pending).
+**Rule:** Defer commission ledger creation to the moment a partner accepts the booking (`POST /bookings/:id/accept`), when `partner_id` becomes available.
+**Applies to:** Any booking creation or commission-related logic.
+
+## L027 — EXPO_PUBLIC_API_URL must match the actual API port
+**What happened:** Customer app had `EXPO_PUBLIC_API_URL=http://localhost:4000` but the Fastify API runs on port 3001. API calls would fail silently with network errors.
+**Rule:** Always verify that env vars referencing local services match the actual ports configured in those services. The API port is set in `apps/api/.env` (`PORT=3001`).
+**Applies to:** Any cross-app communication in the monorepo.
+
+## L028 — Mobile apps can't reach localhost — use machine IP
+**What happened:** Customer app on a physical device called `http://localhost:3001` which refers to the device itself, not the dev machine. Got "Network request failed".
+**Rule:** `EXPO_PUBLIC_API_URL` must use the dev machine's LAN IP (e.g. `http://192.168.x.x:3001`), not `localhost`. On Android emulators `10.0.2.2` maps to host localhost, but physical devices need the actual IP. Run `ipconfig getifaddr en0` on macOS to find it.
+**Applies to:** Any mobile app calling a local dev API server.
+
+## L029 — Fastify must bind to 0.0.0.0 for external access
+**What happened:** Fastify dev server defaulted to `127.0.0.1` (localhost only). Even with the correct IP in the mobile app, requests couldn't reach the server.
+**Rule:** Add `-a 0.0.0.0` to the `fastify start` command so it listens on all network interfaces. Without this, only the machine itself can reach the API.
+**Applies to:** Any Fastify dev server accessed from mobile devices or other machines on the network.
+
+## L030 — Stack.Screen headerShown:true doesn't reliably handle safe area in nested navigators
+**What happened:** Booking detail page used `Stack.Screen options={{ headerShown: true }}` inside a Stack whose parent `_layout.tsx` had `headerShown: false`. The header rendered but was behind the notch/status bar.
+**Rule:** When a screen is inside a nested navigator (e.g. Stack inside Tabs), don't rely on `Stack.Screen headerShown: true` for safe area handling. Instead, use `useSafeAreaInsets()` hook with manual `paddingTop: insets.top + N` and build a custom header row with a back button.
+**Applies to:** Any detail/sub-screen inside a tab that uses a nested Stack with `headerShown: false`.

@@ -12,7 +12,7 @@ import { Ionicons } from '@expo/vector-icons'
 import { useBookingFlow } from '@/context/booking-flow'
 import { useAuth } from '@/lib/auth'
 
-const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://localhost:4000'
+const API_URL = process.env.EXPO_PUBLIC_API_URL ?? 'http://192.168.100.79:3001'
 
 export default function SummaryScreen() {
   const router = useRouter()
@@ -49,9 +49,9 @@ export default function SummaryScreen() {
         throw new Error((err as { message?: string }).message ?? 'Booking failed')
       }
 
+      const data = (await res.json()) as { booking: { id: string } }
       flow.reset()
-      router.dismissAll()
-      Alert.alert('Booked!', 'Your request is being sent to nearby partners.')
+      router.replace({ pathname: '/booking/matching', params: { bookingId: data.booking.id } })
     } catch (e: unknown) {
       const message = e instanceof Error ? e.message : 'Could not place booking. Please try again.'
       Alert.alert('Error', message)
