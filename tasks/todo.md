@@ -221,12 +221,12 @@
 - [x] API: `POST /partners/login` — look up partner by phone, bcrypt.compare(passcode, hash), return Supabase session (signInWithPassword with phone@safainow.local hack)
 - [x] Admin: createPartner creates Supabase Auth user; resetPasscode syncs Auth password
 
-### 🔲 Partner App — Incoming Job
-- [ ] Register Expo push token on login → store in partners table
-- [ ] Handle incoming Expo push notification (job offer) — show JobOfferScreen
-- [ ] Job offer screen `app/job-offer/[booking_id].tsx` — customer area, packages, total price; Accept / Ignore buttons (full Urdu)
-- [ ] API: `POST /bookings/:id/accept` — atomic UPDATE WHERE status=pending RETURNING *; on success: set status=accepted + on_route + log timeline; send dismissal to other notified partners
-- [ ] If another partner accepted first: dismissal push → navigate back to home
+### ✅ Partner App — Incoming Job
+- [x] Register Expo push token on login → store in partners table
+- [x] Handle incoming Expo push notification (job offer) — show JobOfferScreen
+- [x] Job offer screen `app/job-offer/[bookingId].tsx` — address, packages, earnings; Accept / Ignore (Urdu)
+- [x] API: `POST /bookings/:id/accept` — atomic UPDATE WHERE status=pending; log timeline; commission ledger; dismissal push
+- [x] If another partner accepted first: dismissal push → navigate back to home
 
 ### 🔲 Partner App — Active Job
 - [ ] Active job screen `app/(app)/job/active.tsx`:
