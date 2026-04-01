@@ -67,9 +67,8 @@ this monorepo. Follow these rules without exception:
   Edge Functions
 - **Auth**: Supabase Auth email/password. Partners use `{phone}@safainow.local`
   as the email address (phone+PIN auth hack).
-- **Push notifications**: FCM v1 API (legacy shut down June 2025). Use raw FCM
-  tokens via `getDevicePushTokenAsync()`, not Expo Push Tokens. Fallback: Expo
-  Push Service.
+- **Push notifications**: Expo Push Service via `expo-notifications`. No Firebase
+  or service account required. Use `Notifications.getExpoPushTokenAsync()`.
 - **Maps**: Google Maps SDK
 - **Package manager**: pnpm always
 

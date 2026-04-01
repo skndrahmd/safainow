@@ -44,7 +44,7 @@ safainow/
 | Geo Queries | PostGIS | Radius-based partner matching |
 | Auth | Supabase Auth | Email/password + Google OAuth |
 | Realtime | Supabase Realtime | Live location, job status updates |
-| Push Notifications | Expo Push + FCM/APNs | Job alerts, status updates |
+| Push Notifications | Expo Push Service | Job alerts, status updates |
 | Maps | Google Maps SDK | Live location, address search |
 | File Storage | Supabase Storage | Profile pictures, CNIC images |
 

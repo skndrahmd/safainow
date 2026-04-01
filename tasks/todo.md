@@ -186,7 +186,7 @@
 - [x] Delete account `app/(app)/profile/delete-account.tsx` — type "DELETE" to confirm → `DELETE /customers/me` API → sign out
 - [x] API: `DELETE /customers/me` `apps/api/src/routes/customers/index.ts` — delete customer row + auth user via admin client
 - [ ] Change email `app/(app)/profile/change-email.tsx` — deferred (requires email re-confirmation flow)
-- [ ] Push notification toggle — deferred to Sprint 3 (FCM not wired yet)
+- [ ] Push notification toggle — deferred to Sprint 3 (Expo Push not wired yet)
 
 ### ✅ API — Booking Creation
 - [x] Fastify auth plugin `apps/api/src/plugins/auth.ts` — verify Supabase JWT via JWKS endpoint (asymmetric keys, no static secret needed)
@@ -222,8 +222,8 @@
 - [x] Admin: createPartner creates Supabase Auth user; resetPasscode syncs Auth password
 
 ### 🔲 Partner App — Incoming Job
-- [ ] Register FCM device token on login → store in partners table
-- [ ] Handle incoming FCM push notification (job offer) — show JobOfferScreen
+- [ ] Register Expo push token on login → store in partners table
+- [ ] Handle incoming Expo push notification (job offer) — show JobOfferScreen
 - [ ] Job offer screen `app/job-offer/[booking_id].tsx` — customer area, packages, total price; Accept / Ignore buttons (full Urdu)
 - [ ] API: `POST /bookings/:id/accept` — atomic UPDATE WHERE status=pending RETURNING *; on success: set status=accepted + on_route + log timeline; send dismissal to other notified partners
 - [ ] If another partner accepted first: dismissal push → navigate back to home
@@ -241,8 +241,8 @@
 
 ### 🔲 Matching Engine (API)
 - [ ] `GET /partners/nearby` — PostGIS ST_DWithin query: active + available partners within radius
-- [ ] On booking creation: query nearby partners, create job_offers rows, send FCM push to all
-- [ ] FCM v1 push: `apps/api/src/lib/fcm.ts` — send via Google FCM HTTP v1 API (service account auth)
+- [ ] On booking creation: query nearby partners, create job_offers rows, send Expo push to all
+- [ ] Expo Push: `apps/api/src/lib/push.ts` — send via Expo Push API (no Firebase or service account)
 - [ ] Dismissal push: after job accepted, push to all other job_offers for same booking
 - [ ] Timeout: if no partner accepts within N minutes, notify customer (DB-tracked timeout)
 - [ ] On partner cancellation: reset booking to pending, re-run matching excluding cancelling partner

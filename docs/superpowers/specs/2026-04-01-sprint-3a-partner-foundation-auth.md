@@ -22,7 +22,7 @@ This is a prerequisite for Sprint 3B (Matching Engine) and Sprint 3C (Incoming J
 - Admin app update: create/update Supabase Auth user on partner create/reset-passcode
 
 **Out of scope (later sub-sprints):**
-- FCM push notifications
+- Expo Push notifications
 - Job offer screen
 - Active job screen
 - Live location
