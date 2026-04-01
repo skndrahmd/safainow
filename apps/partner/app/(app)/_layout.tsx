@@ -1,11 +1,11 @@
 import { Tabs } from 'expo-router'
-import { Text } from 'react-native'
+import UrduText from '@/components/UrduText'
 
 function TabLabel({ label }: { label: string }) {
   return (
-    <Text style={{ fontFamily: 'NotoNastaliqUrdu', fontSize: 11 }}>
+    <UrduText style={{ fontSize: 11 }}>
       {label}
-    </Text>
+    </UrduText>
   )
 }
 

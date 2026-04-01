@@ -1,7 +1,6 @@
 import { useState } from 'react'
 import {
   View,
-  Text,
   TextInput,
   TouchableOpacity,
   ActivityIndicator,
@@ -10,6 +9,7 @@ import {
   Alert,
 } from 'react-native'
 import { supabase } from '@/lib/supabase'
+import UrduText from '@/components/UrduText'
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!
 
@@ -43,7 +43,6 @@ export default function LoginScreen() {
         return
       }
 
-      // Set the session in the Supabase client — triggers AuthContext update
       await supabase.auth.setSession({
         access_token: data.session.access_token,
         refresh_token: data.session.refresh_token,
@@ -61,25 +60,16 @@ export default function LoginScreen() {
       behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
     >
       <View className="flex-1 justify-center px-6">
-        <Text
-          className="text-3xl font-bold text-center mb-2"
-          style={{ fontFamily: 'NotoNastaliqUrdu' }}
-        >
+        <UrduText className="text-3xl font-bold text-center mb-2" style={{ fontSize: 30 }}>
           صفائی ناؤ
-        </Text>
-        <Text
-          className="text-lg text-gray-500 text-center mb-10"
-          style={{ fontFamily: 'NotoNastaliqUrdu' }}
-        >
+        </UrduText>
+        <UrduText className="text-lg text-gray-500 text-center mb-10" style={{ fontSize: 18 }}>
           پارٹنر لاگ ان
-        </Text>
+        </UrduText>
 
-        <Text
-          className="text-sm text-gray-600 mb-1 text-right"
-          style={{ fontFamily: 'NotoNastaliqUrdu' }}
-        >
+        <UrduText className="text-sm text-gray-600 mb-1 text-right" style={{ fontSize: 14 }}>
           فون نمبر
-        </Text>
+        </UrduText>
         <TextInput
           className="border border-gray-300 rounded-lg px-4 py-3 mb-4 text-base text-right"
           placeholder="03001234567"
@@ -89,12 +79,9 @@ export default function LoginScreen() {
           autoCapitalize="none"
         />
 
-        <Text
-          className="text-sm text-gray-600 mb-1 text-right"
-          style={{ fontFamily: 'NotoNastaliqUrdu' }}
-        >
+        <UrduText className="text-sm text-gray-600 mb-1 text-right" style={{ fontSize: 14 }}>
           پاس کوڈ
-        </Text>
+        </UrduText>
         <TextInput
           className="border border-gray-300 rounded-lg px-4 py-3 mb-8 text-base text-center tracking-widest"
           placeholder="••••••"
@@ -113,12 +100,9 @@ export default function LoginScreen() {
           {loading ? (
             <ActivityIndicator color="white" />
           ) : (
-            <Text
-              className="text-white text-lg font-semibold"
-              style={{ fontFamily: 'NotoNastaliqUrdu' }}
-            >
+            <UrduText className="text-white text-lg font-semibold" style={{ fontSize: 18 }}>
               لاگ ان
-            </Text>
+            </UrduText>
           )}
         </TouchableOpacity>
       </View>
