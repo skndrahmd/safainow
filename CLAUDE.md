@@ -55,9 +55,9 @@ this monorepo. Follow these rules without exception:
 
 - **Shared packages**: zero React dependencies. Pure TypeScript only.
 - **`apps/customer` and `apps/partner`**: pinned to the React version required
-  by the current Expo SDK (check expo.dev/changelog). Currently `react: 19.2.3`,
-  `react-native: 0.83.2` (Expo SDK 55).
-- **`apps/admin`**: pinned to `react: 19.2.3` (Next.js 16 requirement).
+  by the current Expo SDK (check expo.dev/changelog). Currently `react: 19.1.0`,
+  `react-native: 0.81.5` (Expo SDK 54).
+- **`apps/admin`**: pinned to `react: 19.2.0` (Next.js 16 requirement).
 - If a shared package ever needs React, use `peerDependencies` with
   `"react": ">=18.0.0"` — never a direct dependency.
 
