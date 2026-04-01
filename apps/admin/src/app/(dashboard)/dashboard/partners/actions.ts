@@ -4,6 +4,7 @@ import { revalidatePath } from 'next/cache'
 import { redirect } from 'next/navigation'
 import bcrypt from 'bcryptjs'
 import { createClient } from '@/lib/supabase/server'
+import { createAdminClient } from '@/lib/supabase/admin'
 
 const BUCKET = 'partner-assets'
 
@@ -28,6 +29,7 @@ async function uploadFile(
 
 export async function createPartner(formData: FormData) {
   const supabase = await createClient()
+  const adminSupabase = createAdminClient()
 
   const fullName = formData.get('full_name') as string
   const phone = formData.get('phone') as string
@@ -53,6 +55,17 @@ export async function createPartner(formData: FormData) {
   const passcode = generatePasscode()
   const passcodeHash = await bcrypt.hash(passcode, 12)
 
+  // Create Supabase Auth user first to get auth_user_id
+  const { data: authUser, error: authError } = await adminSupabase.auth.admin.createUser({
+    email: `${phone.trim()}@safainow.local`,
+    password: passcode,
+    email_confirm: true,
+  })
+
+  if (authError) {
+    return { error: authError.message }
+  }
+
   const { data, error } = await supabase
     .from('partners')
     .insert({
@@ -62,11 +75,14 @@ export async function createPartner(formData: FormData) {
       cnic_number: cnicNumber,
       profile_picture_url: profilePictureUrl,
       cnic_picture_url: cnicPictureUrl,
+      auth_user_id: authUser.user.id,
     })
     .select('id')
     .single()
 
   if (error) {
+    // Clean up auth user if DB insert fails
+    await adminSupabase.auth.admin.deleteUser(authUser.user.id)
     return { error: error.message }
   }
 
@@ -154,10 +170,23 @@ export async function deletePartner(id: string) {
 
 export async function resetPasscode(id: string) {
   const supabase = await createClient()
+  const adminSupabase = createAdminClient()
 
   const passcode = generatePasscode()
   const passcodeHash = await bcrypt.hash(passcode, 12)
 
+  // Get partner's auth_user_id
+  const { data: partner, error: fetchError } = await supabase
+    .from('partners')
+    .select('auth_user_id')
+    .eq('id', id)
+    .single()
+
+  if (fetchError || !partner) {
+    return { error: 'Partner not found' }
+  }
+
+  // Update DB passcode hash
   const { error } = await supabase
     .from('partners')
     .update({ passcode_hash: passcodeHash })
@@ -165,6 +194,17 @@ export async function resetPasscode(id: string) {
 
   if (error) {
     return { error: error.message }
+  }
+
+  // Update Supabase Auth password if auth_user_id exists
+  if (partner.auth_user_id) {
+    const { error: authError } = await adminSupabase.auth.admin.updateUserById(
+      partner.auth_user_id,
+      { password: passcode }
+    )
+    if (authError) {
+      return { error: authError.message }
+    }
   }
 
   revalidatePath(`/dashboard/partners/${id}`)
