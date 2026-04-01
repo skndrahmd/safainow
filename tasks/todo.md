@@ -228,16 +228,15 @@
 - [x] API: `POST /bookings/:id/accept` — atomic UPDATE WHERE status=pending; log timeline; commission ledger; dismissal push
 - [x] If another partner accepted first: dismissal push → navigate back to home
 
-### 🔲 Partner App — Active Job
-- [ ] Active job screen `app/(app)/job/active.tsx`:
-  - [ ] Customer name, address, phone (tap-to-call via `Linking.openURL('tel:...')`)
-  - [ ] Live customer location on Google Maps (customer address lat/lng)
-  - [ ] Job stage action button: correct button shown per current status
-  - [ ] "پہنچ گیا" (Reached) → API PATCH /bookings/:id/reached → status=reached + work_in_progress auto
-  - [ ] "کام مکمل" (Completed) → API PATCH /bookings/:id/completed → status=completed
-  - [ ] "کیش وصول" (Cash Collected) → API PATCH /bookings/:id/cash-collected → status=cash_collected + update commission_ledger
-  - [ ] Cancel button (visible within 15 min of accepted_at) → API DELETE /bookings/:id/cancel (partner)
-  - [ ] Countdown timer showing time remaining in cancellation window
+### ✅ Partner App — Active Job
+- [x] Active job screen `app/(app)/(jobs)/active.tsx`:
+  - [x] Customer name, address, phone (tap-to-call)
+  - [x] Live customer location on Google Maps
+  - [x] Job stage action buttons
+  - [x] "پہنچ گیا" → reached + work_in_progress auto
+  - [x] "کام مکمل" → completed
+  - [x] "کیش وصول" → cash_collected + commission update
+  - [x] Cancel button with 15-min window countdown
 
 ### 🔲 Matching Engine (API)
 - [ ] `GET /partners/nearby` — PostGIS ST_DWithin query: active + available partners within radius
