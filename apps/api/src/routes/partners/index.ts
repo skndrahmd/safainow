@@ -1,6 +1,7 @@
 import type { FastifyPluginAsync } from 'fastify'
 import bcrypt from 'bcryptjs'
 import { supabase } from '../../lib/supabase.js'
+import { registerExpoTokenRoute } from './expo-token.js'
 
 const partners: FastifyPluginAsync = async (fastify) => {
   /**
@@ -57,6 +58,8 @@ const partners: FastifyPluginAsync = async (fastify) => {
       },
     })
   })
+
+  await registerExpoTokenRoute(fastify)
 }
 
 export default partners
