@@ -511,6 +511,7 @@ export type Database = {
           cnic_number: string | null
           cnic_picture_url: string | null
           created_at: string
+          expo_push_token: string | null
           full_name: string
           id: string
           is_active: boolean
@@ -526,6 +527,7 @@ export type Database = {
           cnic_number?: string | null
           cnic_picture_url?: string | null
           created_at?: string
+          expo_push_token?: string | null
           full_name: string
           id?: string
           is_active?: boolean
@@ -541,6 +543,7 @@ export type Database = {
           cnic_number?: string | null
           cnic_picture_url?: string | null
           created_at?: string
+          expo_push_token?: string | null
           full_name?: string
           id?: string
           is_active?: boolean
