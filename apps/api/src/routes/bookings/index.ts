@@ -2,6 +2,7 @@ import type { FastifyPluginAsync } from 'fastify'
 import { BookingCreateSchema } from '@safainow/validators'
 import { BOOKING_STATUS, PACKAGE_TYPE } from '@safainow/constants'
 import { supabase } from '../../lib/supabase.js'
+import { matchPartnersForBooking } from '../../lib/matching.js'
 
 const bookings: FastifyPluginAsync = async (fastify) => {
   /**
@@ -172,7 +173,14 @@ const bookings: FastifyPluginAsync = async (fastify) => {
         // Non-critical — booking was already created, log and continue
       }
 
-      // 10. Return created booking
+      // 10. Trigger partner matching — fire and forget (non-blocking)
+      if (input.address_latitude != null && input.address_longitude != null) {
+        matchPartnersForBooking(booking.id, input.address_latitude, input.address_longitude).catch(
+          (err) => request.log.error(err, 'Matching failed')
+        )
+      }
+
+      // 11. Return created booking
       return reply.code(201).send({
         booking,
         packages: bookingPackageRows,

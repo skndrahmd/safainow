@@ -591,7 +591,18 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
-      [_ in never]: never
+      get_nearby_partners: {
+        Args: {
+          booking_lat: number
+          booking_lng: number
+          radius_metres: number
+        }
+        Returns: {
+          expo_push_token: string
+          full_name: string
+          id: string
+        }[]
+      }
     }
     Enums: {
       address_label: "home" | "work" | "parents_house" | "other"
