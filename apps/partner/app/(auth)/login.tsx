@@ -8,10 +8,41 @@ import {
   Platform,
   Alert,
 } from 'react-native'
+import * as Notifications from 'expo-notifications'
+import Constants from 'expo-constants'
 import { supabase } from '@/lib/supabase'
 import UrduText from '@/components/UrduText'
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!
+
+async function registerExpoPushToken(accessToken: string): Promise<void> {
+  try {
+    const { status } = await Notifications.requestPermissionsAsync()
+    if (status !== 'granted') return
+
+    const projectId =
+      Constants.expoConfig?.extra?.eas?.projectId ?? Constants.easConfig?.projectId
+
+    if (!projectId) {
+      console.warn('No EAS project ID found — push token skipped')
+      return
+    }
+
+    const tokenData = await Notifications.getExpoPushTokenAsync({ projectId })
+
+    await fetch(`${API_URL}/partners/me/expo-token`, {
+      method: 'PATCH',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${accessToken}`,
+      },
+      body: JSON.stringify({ expoPushToken: tokenData.data }),
+    })
+  } catch (err) {
+    // Non-critical — don't block login
+    console.warn('Push token registration failed:', err)
+  }
+}
 
 export default function LoginScreen() {
   const [phone, setPhone] = useState('')
@@ -47,6 +78,9 @@ export default function LoginScreen() {
         access_token: data.session.access_token,
         refresh_token: data.session.refresh_token,
       })
+
+      // Register Expo push token (non-blocking)
+      registerExpoPushToken(data.session.access_token)
     } catch {
       Alert.alert('خرابی', 'نیٹ ورک میں مسئلہ ہے')
     } finally {
