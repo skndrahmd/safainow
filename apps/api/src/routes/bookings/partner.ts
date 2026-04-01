@@ -398,3 +398,10 @@ const partnerBookings: FastifyPluginAsync = async (fastify) => {
 }
 
 export default partnerBookings
+
+/**
+ * Register partner booking routes under /partner prefix
+ */
+export async function registerPartnerBookingRoutes(fastify: import('fastify').FastifyInstance): Promise<void> {
+  await fastify.register(partnerBookings, { prefix: '/partner' })
+}

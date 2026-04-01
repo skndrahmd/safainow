@@ -4,6 +4,7 @@ import { BOOKING_STATUS, PACKAGE_TYPE } from '@safainow/constants'
 import { supabase } from '../../lib/supabase.js'
 import { matchPartnersForBooking } from '../../lib/matching.js'
 import { sendExpoPushToMany } from '../../lib/push.js'
+import { registerPartnerBookingRoutes } from './partner.js'
 
 const bookings: FastifyPluginAsync = async (fastify) => {
   /**
@@ -346,6 +347,9 @@ const bookings: FastifyPluginAsync = async (fastify) => {
       return reply.send({ success: true, bookingId })
     },
   )
+
+  // Register partner-specific booking routes
+  await registerPartnerBookingRoutes(fastify)
 }
 
 export default bookings
