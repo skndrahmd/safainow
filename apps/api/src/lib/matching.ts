@@ -35,7 +35,7 @@ export async function matchPartnersForBooking(
     (partners as NearbyPartner[]).map((p) => ({
       booking_id: bookingId,
       partner_id: p.id,
-      status: 'pending',
+      // accepted is null by default (pending)
     }))
   )
 

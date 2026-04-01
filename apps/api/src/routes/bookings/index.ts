@@ -3,6 +3,7 @@ import { BookingCreateSchema } from '@safainow/validators'
 import { BOOKING_STATUS, PACKAGE_TYPE } from '@safainow/constants'
 import { supabase } from '../../lib/supabase.js'
 import { matchPartnersForBooking } from '../../lib/matching.js'
+import { sendExpoPushToMany } from '../../lib/push.js'
 
 const bookings: FastifyPluginAsync = async (fastify) => {
   /**
@@ -244,6 +245,105 @@ const bookings: FastifyPluginAsync = async (fastify) => {
       })
 
       return reply.send({ booking: updated })
+    },
+  )
+
+  /**
+   * POST /bookings/:id/accept
+   * Auth: partner JWT required
+   */
+  fastify.post<{ Params: { id: string } }>(
+    '/:id/accept',
+    { preHandler: [fastify.authenticate] },
+    async (request, reply) => {
+      const { id: bookingId } = request.params
+      const authUserId = (request.user as { sub: string }).sub
+
+      // Resolve partner from auth_user_id
+      const { data: partner, error: partnerError } = await supabase
+        .from('partners')
+        .select('id')
+        .eq('auth_user_id', authUserId)
+        .single()
+
+      if (partnerError || !partner) {
+        return reply.code(403).send({ error: 'PARTNER_NOT_FOUND' })
+      }
+
+      const partnerId = partner.id
+
+      // Atomic claim — only succeeds if booking is still pending
+      const { data: claimed, error: claimError } = await supabase
+        .from('bookings')
+        .update({
+          partner_id: partnerId,
+          status: BOOKING_STATUS.ACCEPTED,
+          accepted_at: new Date().toISOString(),
+        })
+        .eq('id', bookingId)
+        .eq('status', BOOKING_STATUS.PENDING)
+        .select('id, total_price')
+        .single()
+
+      if (claimError || !claimed) {
+        return reply.code(409).send({ error: 'BOOKING_ALREADY_CLAIMED' })
+      }
+
+      // Log timeline
+      await supabase.from('booking_timeline').insert({
+        booking_id: bookingId,
+        status: BOOKING_STATUS.ACCEPTED,
+        actor_type: 'partner',
+        actor_id: partnerId,
+      })
+
+      // Create commission ledger entry
+      const total = Number(claimed.total_price)
+      await supabase.from('commission_ledger').insert({
+        booking_id: bookingId,
+        partner_id: partnerId,
+        total_amount: total,
+        commission_amount: total * 0.25,
+        partner_amount: total * 0.75,
+        status: 'owed',
+      })
+
+      // Mark this offer as accepted
+      await supabase
+        .from('job_offers')
+        .update({ accepted: true, responded_at: new Date().toISOString() })
+        .eq('booking_id', bookingId)
+        .eq('partner_id', partnerId)
+
+      // Dismiss all other pending offers
+      const { data: otherOffers } = await supabase
+        .from('job_offers')
+        .select('partner_id, partners(expo_push_token)')
+        .eq('booking_id', bookingId)
+        .neq('partner_id', partnerId)
+        .is('accepted', null)
+
+      if (otherOffers && otherOffers.length > 0) {
+        await supabase
+          .from('job_offers')
+          .update({ accepted: false, responded_at: new Date().toISOString() })
+          .eq('booking_id', bookingId)
+          .neq('partner_id', partnerId)
+
+        const dismissTokens = (otherOffers as unknown[])
+          .map((o: unknown) => (o as { partners?: { expo_push_token?: string } }).partners?.expo_push_token)
+          .filter(Boolean) as string[]
+
+        if (dismissTokens.length > 0) {
+          await sendExpoPushToMany(dismissTokens, {
+            title: 'کام نہیں ملا',
+            body: 'یہ بکنگ کسی اور نے لے لی',
+            data: { bookingId, type: 'JOB_DISMISSED' },
+          })
+        }
+      }
+
+      return reply.send({ success: true, bookingId })
     },
   )
 }
