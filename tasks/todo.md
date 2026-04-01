@@ -208,17 +208,18 @@
 
 ## Sprint 3 — Matching & Live Job
 
-### 🔲 Partner App — Foundation
-- [ ] Configure Expo Router v4 in partner app
-- [ ] `I18nManager.forceRTL(true)` on app start
-- [ ] Load Noto Nastaliq Urdu font (`expo-font` or bundled asset)
-- [ ] Root layout: AuthProvider + session guard → login if no session
-- [ ] Auth stack + main stack layouts
+### ✅ Partner App — Foundation
+- [x] Configure Expo Router v4 in partner app
+- [x] `I18nManager.forceRTL(true)` on app start
+- [x] Load Noto Nastaliq Urdu font (`expo-font` or bundled asset)
+- [x] Root layout: AuthProvider + session guard → login if no session
+- [x] Auth stack + main stack layouts
 
-### 🔲 Partner App — Auth
-- [ ] `lib/auth.tsx` — AuthContext for partner (phone + passcode login)
-- [ ] Login screen `app/(auth)/login.tsx` — phone number input + 6-digit passcode (Urdu UI)
-- [ ] API: `POST /partners/login` — look up partner by phone, bcrypt.compare(passcode, hash), return Supabase custom JWT (or use signInWithPassword with phone hack)
+### ✅ Partner App — Auth
+- [x] `lib/auth.tsx` — AuthContext for partner (phone + passcode login)
+- [x] Login screen `app/(auth)/login.tsx` — phone number input + 6-digit passcode (Urdu UI)
+- [x] API: `POST /partners/login` — look up partner by phone, bcrypt.compare(passcode, hash), return Supabase session (signInWithPassword with phone@safainow.local hack)
+- [x] Admin: createPartner creates Supabase Auth user; resetPasscode syncs Auth password
 
 ### 🔲 Partner App — Incoming Job
 - [ ] Register FCM device token on login → store in partners table
