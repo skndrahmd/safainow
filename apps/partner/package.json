@@ -14,6 +14,7 @@
   "dependencies": {
     "@expo/vector-icons": "^15.0.3",
     "@react-native-async-storage/async-storage": "2.2.0",
+    "@safainow/constants": "workspace:^",
     "@safainow/types": "workspace:^",
     "@supabase/supabase-js": "^2.99.2",
     "expo": "~54.0.33",
