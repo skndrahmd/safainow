@@ -1,3 +1,4 @@
+Initialising login role...
 export type Json =
   | string
   | number
@@ -11,6 +12,31 @@ export type Database = {
   // instead of createClient<Database, { PostgrestVersion: 'XX' }>(URL, KEY)
   __InternalSupabase: {
     PostgrestVersion: "14.4"
+  }
+  graphql_public: {
+    Tables: {
+      [_ in never]: never
+    }
+    Views: {
+      [_ in never]: never
+    }
+    Functions: {
+      graphql: {
+        Args: {
+          extensions?: Json
+          operationName?: string
+          query?: string
+          variables?: Json
+        }
+        Returns: Json
+      }
+    }
+    Enums: {
+      [_ in never]: never
+    }
+    CompositeTypes: {
+      [_ in never]: never
+    }
   }
   public: {
     Tables: {
@@ -482,6 +508,7 @@ export type Database = {
       }
       partners: {
         Row: {
+          auth_user_id: string | null
           cnic_number: string | null
           cnic_picture_url: string | null
           created_at: string
@@ -496,6 +523,7 @@ export type Database = {
           updated_at: string
         }
         Insert: {
+          auth_user_id?: string | null
           cnic_number?: string | null
           cnic_picture_url?: string | null
           created_at?: string
@@ -510,6 +538,7 @@ export type Database = {
           updated_at?: string
         }
         Update: {
+          auth_user_id?: string | null
           cnic_number?: string | null
           cnic_picture_url?: string | null
           created_at?: string
@@ -703,6 +732,9 @@ export type CompositeTypes<
     : never
 
 export const Constants = {
+  graphql_public: {
+    Enums: {},
+  },
   public: {
     Enums: {
       address_label: ["home", "work", "parents_house", "other"],
@@ -724,3 +756,5 @@ export const Constants = {
     },
   },
 } as const
+A new version of Supabase CLI is available: v2.84.2 (currently installed v2.78.1)
+We recommend updating regularly for new features and bug fixes: https://supabase.com/docs/guides/cli/getting-started#updating-the-supabase-cli
