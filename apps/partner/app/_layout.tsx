@@ -72,7 +72,7 @@ function RootLayoutNav() {
     <Stack screenOptions={{ headerShown: false }}>
       <Stack.Protected guard={!!session}>
         <Stack.Screen name="(app)" />
-        <Stack.Screen name="job-offer" />
+        <Stack.Screen name="job-offer/[bookingId]" />
       </Stack.Protected>
       <Stack.Protected guard={!session}>
         <Stack.Screen name="(auth)" />
