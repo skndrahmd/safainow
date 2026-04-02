@@ -238,11 +238,11 @@
   - [x] "کیش وصول" → cash_collected + commission update
   - [x] Cancel button with 15-min window countdown
 
-### 🔲 Matching Engine (API)
-- [ ] `GET /partners/nearby` — PostGIS ST_DWithin query: active + available partners within radius
-- [ ] On booking creation: query nearby partners, create job_offers rows, send Expo push to all
-- [ ] Expo Push: `apps/api/src/lib/push.ts` — send via Expo Push API (no Firebase or service account)
-- [ ] Dismissal push: after job accepted, push to all other job_offers for same booking
+### ✅ Matching Engine (API)
+- [x] `get_nearby_partners` PostGIS function — active + available partners within radius
+- [x] On booking creation: query nearby partners, create job_offers rows, send Expo push to all
+- [x] Expo Push: `apps/api/src/lib/push.ts` — send via Expo Push API (no Firebase or service account)
+- [x] Dismissal push: after job accepted, push to all other job_offers for same booking
 - [ ] Timeout: if no partner accepts within N minutes, notify customer (DB-tracked timeout)
 - [ ] On partner cancellation: reset booking to pending, re-run matching excluding cancelling partner
 
@@ -253,14 +253,14 @@
 
 ### 🔲 Tap-to-Call
 - [ ] Customer app: tap partner phone → `Linking.openURL('tel:+92...')`
-- [ ] Partner app: tap customer phone → `Linking.openURL('tel:+92...')`
+- [x] Partner app: tap customer phone → `Linking.openURL('tel:+92...')`
 
-### 🔲 Cancellation Window
+### ✅ Cancellation Window
 - [ ] Customer app: cancel button on active booking only visible while `Date.now() - accepted_at < 15min`
 - [ ] Customer app: countdown timer showing remaining cancellation window
-- [ ] Partner app: cancel button on active job only visible within 15min window
-- [ ] Partner app: countdown timer in Urdu
-- [ ] API `DELETE /bookings/:id/cancel` — validates window, sets status, logs timeline, notifies other party
+- [x] Partner app: cancel button on active job only visible within 15min window
+- [x] Partner app: countdown timer in Urdu
+- [x] API `DELETE /bookings/:id/cancel-partner` — validates window, sets status, logs timeline
 
 ### 🔲 Customer Feedback
 - [ ] Customer app: after booking status becomes `cash_collected`, show feedback prompt (thumbs up / thumbs down / skip)
