@@ -105,3 +105,26 @@ export async function deletePackage(id: string) {
   revalidatePath('/dashboard/packages')
   return { success: true }
 }
+
+export async function reorderPackages(packageIds: string[]) {
+  const supabase = await createClient()
+
+  // Update each package's sort_order atomically
+  const updates = packageIds.map((id, index) =>
+    supabase
+      .from('packages')
+      .update({ sort_order: index })
+      .eq('id', id)
+  )
+
+  const results = await Promise.all(updates)
+
+  // Check for errors
+  const errors = results.filter((r) => r.error)
+  if (errors.length > 0) {
+    return { error: 'Failed to reorder packages' }
+  }
+
+  revalidatePath('/dashboard/packages')
+  return { success: true }
+}

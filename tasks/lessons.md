@@ -227,7 +227,17 @@
 **Rule:** When building password change screens for Supabase Auth, only collect the new password (+ confirm). No old password needed. This also means Google-only users can set a password for dual login without needing to know an old one.
 **Applies to:** Any Supabase Auth password change/set flow.
 
-## L038 — TypeScript `as const` arrays with optional properties need explicit typing
+## L038 — Use @dnd-kit for drag-and-drop in React 19 / Next.js 16
+**What happened:** Needed drag-and-drop reordering for packages in admin dashboard. `react-beautiful-dnd` has poor React 19 support. `@dnd-kit/core` + `@dnd-kit/sortable` works perfectly.
+**Rule:** For drag-and-drop in React 19 / Next.js 16 apps, use `@dnd-kit/core` and `@dnd-kit/sortable`. Wrap sortable items with `SortableContext` and `useSortable` hook. Use `verticalListSortingStrategy` for table rows. Implement optimistic UI updates with revert on error for better UX.
+**Applies to:** Any sortable/reorderable list in React 19+ apps.
+
+## L039 — Sort order field with auto-assignment trigger for new items
+**What happened:** Needed admin-controllable display order for packages. Used `sort_order` column with database trigger to auto-assign new items to the end of the list.
+**Rule:** When adding admin-controlled ordering: (1) add `sort_order INTEGER NOT NULL DEFAULT 0` column, (2) create index for efficient ordering, (3) backfill existing items using `ROW_NUMBER() OVER (ORDER BY created_at)`, (4) add trigger to auto-assign next sort_order for new items. This ensures new items don't require manual ordering while still allowing admin control.
+**Applies to:** Any table where admin needs control over display order.
+
+## L040 — TypeScript `as const` arrays with optional properties need explicit typing
 **What happened:** Used `as const` on an array of menu items where only one item had a `danger` property. TS narrowed each item to its literal type, so `.danger` didn't exist on items without it, causing type errors.
 **Rule:** When an array of objects has optional properties that only some items have, either: (1) add the property with `false`/`undefined` to all items, or (2) use an explicit type annotation instead of `as const` (e.g. `readonly { label: string; icon: string; danger?: boolean }[]`).
 **Applies to:** Any `as const` array where items have heterogeneous shapes.

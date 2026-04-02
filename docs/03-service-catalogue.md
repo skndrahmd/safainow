@@ -70,3 +70,8 @@ type PackageType = 'cleaning' | 'standalone' | 'custom'
 - Admin can delete a package permanently
 - If an individual service is disabled/deleted, it is automatically removed from all packages
 - Admin assigns package type on creation — this drives combination logic on the frontend
+- **Package display order is controlled by admin via drag-and-drop** — the `sort_order` field determines the order packages appear in the customer app
+
+## Package Display Order
+
+Packages are displayed in both the admin dashboard and customer app ordered by `sort_order` (ascending). Admin can reorder packages via drag-and-drop in the admin dashboard. New packages are automatically assigned the next available `sort_order` value (placed at the end of the list).

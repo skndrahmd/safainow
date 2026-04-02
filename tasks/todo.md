@@ -70,6 +70,7 @@
 - [x] Toggle active / disabled
 - [x] Delete package
 - [x] Custom-package guard (only one allowed)
+- [x] Drag-and-drop reordering with `sort_order` field (order reflects in customer app)
 
 ### ✅ Admin — Seed Data
 - [x] Seed migration: 15 individual services with prices

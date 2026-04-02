@@ -37,7 +37,7 @@ export default function HomeScreen() {
       .from('packages')
       .select('*')
       .eq('is_active', true)
-      .order('created_at', { ascending: true })
+      .order('sort_order', { ascending: true })
 
     if (error) {
       setError('Could not load packages. Please try again.')

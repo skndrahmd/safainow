@@ -66,6 +66,7 @@ The Admin Dashboard is a Next.js web application. It is the control centre for t
 
 ### 6. Package Management
 - List of all packages with type badge and status
+- **Drag-and-drop reordering** — admin can reorder packages; order reflects in customer app immediately
 - Create new package:
   - Name
   - Description (shown on customer app detail page)
