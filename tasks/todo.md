@@ -247,10 +247,10 @@
 - [ ] Timeout: if no partner accepts within N minutes, notify customer (DB-tracked timeout)
 - [ ] On partner cancellation: reset booking to pending, re-run matching excluding cancelling partner
 
-### 🔲 Live Location (Supabase Realtime)
-- [ ] Partner app: publish GPS location every 5 seconds via Supabase channel while job is active
-- [ ] Customer app: subscribe to partner location channel once booking accepted; show on Google Maps
-- [ ] Store last known location in `partners.location` (PostGIS point) on each update
+### ✅ Live Location (Supabase Realtime)
+- [x] Partner app: publish GPS location every 5 seconds via Supabase channel while job is active
+- [x] Customer app: subscribe to partner location channel once booking accepted; show on Google Maps
+- [x] Store last known location in `partners.last_location` (PostGIS point) on each update
 
 ### 🔲 Tap-to-Call
 - [ ] Customer app: tap partner phone → `Linking.openURL('tel:+92...')`
