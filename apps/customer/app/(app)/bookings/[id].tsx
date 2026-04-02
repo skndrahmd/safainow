@@ -62,6 +62,11 @@ export default function BookingDetailScreen() {
     booking?.status === 'cancelled_by_partner' ||
     booking?.status === 'cancelled_by_admin'
 
+  const canTrackPartner =
+    booking?.status === 'accepted' ||
+    booking?.status === 'on_route' ||
+    booking?.status === 'reached'
+
   const handleRebook = () => {
     if (!booking) return
 
@@ -197,6 +202,18 @@ export default function BookingDetailScreen() {
           {booking.cancelled_at && <TimelineRow label="Cancelled" time={booking.cancelled_at} />}
         </View>
       </ScrollView>
+
+      {/* Track Partner button for active bookings */}
+      {canTrackPartner && (
+        <View className="absolute bottom-0 left-0 right-0 border-t border-gray-100 bg-white px-5 pb-8 pt-4">
+          <TouchableOpacity
+            className="items-center rounded-2xl bg-blue-600 py-4"
+            onPress={() => router.push(`/bookings/active?id=${id}`)}
+          >
+            <Text className="text-base font-semibold text-white">Track Partner</Text>
+          </TouchableOpacity>
+        </View>
+      )}
 
       {/* Re-book footer */}
       {canRebook && (

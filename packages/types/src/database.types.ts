@@ -494,6 +494,7 @@ export type Database = {
           id: string
           is_active: boolean
           is_available: boolean
+          last_location: unknown
           location: unknown
           passcode_hash: string
           phone: string
@@ -510,6 +511,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_available?: boolean
+          last_location?: unknown
           location?: unknown
           passcode_hash: string
           phone: string
@@ -526,6 +528,7 @@ export type Database = {
           id?: string
           is_active?: boolean
           is_available?: boolean
+          last_location?: unknown
           location?: unknown
           passcode_hash?: string
           phone?: string
@@ -580,6 +583,10 @@ export type Database = {
           full_name: string
           id: string
         }[]
+      }
+      update_partner_location: {
+        Args: { p_latitude: number; p_longitude: number; p_user_id: string }
+        Returns: undefined
       }
     }
     Enums: {

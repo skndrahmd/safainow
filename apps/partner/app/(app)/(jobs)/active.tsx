@@ -7,6 +7,7 @@ import * as Linking from 'expo-linking'
 import { useAuth } from '@/lib/auth'
 import UrduText from '@/components/UrduText'
 import CountdownTimer from '@/components/CountdownTimer'
+import LocationPublisher from '@/components/LocationPublisher'
 import { BOOKING_STATUS, CANCELLATION_WINDOW_MS } from '@safainow/constants'
 
 const API_URL = process.env.EXPO_PUBLIC_API_URL!
@@ -181,11 +182,21 @@ export default function ActiveJobScreen() {
   const latitude = booking.address_lat ?? 24.8607 // Default: Karachi
   const longitude = booking.address_lng ?? 67.0011
 
+  // Track location while job is active (accepted → cash_collected)
+  const isTrackingActive = booking && [
+    BOOKING_STATUS.ACCEPTED,
+    BOOKING_STATUS.ON_ROUTE,
+    BOOKING_STATUS.REACHED,
+    BOOKING_STATUS.WORK_IN_PROGRESS,
+  ].includes(booking.status as any)
+
   return (
     <View
       className="flex-1 bg-white"
       style={{ paddingTop: insets.top, paddingBottom: insets.bottom }}
     >
+      {/* Location tracking - broadcasts GPS while job is active */}
+      <LocationPublisher isActive={isTrackingActive} bookingId={booking?.id ?? null} />
       <ScrollView className="flex-1">
         {/* Map */}
         <View className="h-48">
