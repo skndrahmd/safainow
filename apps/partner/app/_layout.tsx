@@ -29,9 +29,19 @@ Notifications.setNotificationHandler({
 function RootLayoutNav() {
   const { session, isLoading } = useAuth()
   const responseListener = useRef<Notifications.EventSubscription | null>(null)
+  const receivedListener = useRef<Notifications.EventSubscription | null>(null)
 
   useEffect(() => {
-    // Handle tap on notification (foreground or background)
+    // Handle notification received while app is in foreground
+    receivedListener.current = Notifications.addNotificationReceivedListener((notification) => {
+      const data = notification.request.content.data as Record<string, string>
+      if (data?.type === 'JOB_OFFER' && data?.bookingId) {
+        // Show alert and navigate to job offer screen
+        router.push(`/job-offer/${data.bookingId}`)
+      }
+    })
+
+    // Handle tap on notification (when app was in background)
     responseListener.current = Notifications.addNotificationResponseReceivedListener(
       (response) => {
         const data = response.notification.request.content.data as Record<string, string>
@@ -51,6 +61,7 @@ function RootLayoutNav() {
     })
 
     return () => {
+      receivedListener.current?.remove()
       responseListener.current?.remove()
     }
   }, [])
